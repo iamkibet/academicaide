@@ -6,6 +6,8 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class User extends Authenticatable
 {
@@ -22,6 +24,8 @@ class User extends Authenticatable
         'email',
         'password',
         'role',
+        'default_payment_method_id',
+        'two_factor_enabled',
     ];
 
     /**
@@ -47,14 +51,9 @@ class User extends Authenticatable
         ];
     }
 
-    public function clientOrders()
+    public function orders()
     {
         return $this->hasMany(Order::class, 'client_id');
-    }
-
-    public function adminOrders()
-    {
-        return $this->hasMany(Order::class, 'admin_id');
     }
 
     public function sentMessages()
@@ -69,11 +68,21 @@ class User extends Authenticatable
 
     public function isAdmin(): bool
     {
-        return $this->role === 'admin';
+        return $this->role === 'A';
     }
 
     public function isClient(): bool
     {
-        return $this->role === 'client';
+        return $this->role === 'U';
+    }
+
+    public function paymentMethods(): HasMany
+    {
+        return $this->hasMany(PaymentMethod::class);
+    }
+
+    public function defaultPaymentMethod(): BelongsTo
+    {
+        return $this->belongsTo(PaymentMethod::class, 'default_payment_method_id');
     }
 }

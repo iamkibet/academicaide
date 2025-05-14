@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Services\OrderPricingService;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -12,43 +13,42 @@ class Order extends Model
 
     protected $fillable = [
         'client_id',
-        'admin_id',
-        'title',
-        'subject',
+        'role',
+        'assignment_type',
+        'service_type',
         'academic_level',
-        'citation_style',
-        'deadline',
+        'subject',
+        'language',
         'pages',
-        'word_count',
+        'words',
+        'size_unit',
+        'line_spacing',
+        'citation_style',
+        'source_count',
+        'deadline',
         'instructions',
-        'status',
-        'price',
-        'price_per_page',
-        'discount',
-        'total_price',
-        'payment_status',
-        'payment_method',
-        'paid_at',
-        'assigned_at',
-        'completed_at',
-        'admin_notes',
         'client_notes',
         'is_urgent',
+        'addons',
+        'price_per_page',
+        'total_price',
+        'discount',
+        'payment_status',
+        'payment_method',
+        'status',
         'revision_count',
-        'last_revision_at',
+        'last_revision_at'
     ];
 
     protected $casts = [
         'deadline' => 'datetime',
-        'paid_at' => 'datetime',
-        'assigned_at' => 'datetime',
-        'completed_at' => 'datetime',
         'last_revision_at' => 'datetime',
-        'price' => 'decimal:2',
         'price_per_page' => 'decimal:2',
-        'discount' => 'decimal:2',
         'total_price' => 'decimal:2',
+        'discount' => 'decimal:2',
         'is_urgent' => 'boolean',
+        'addons' => 'json',
+        'status' => 'string',
     ];
 
     public function client()
@@ -56,9 +56,9 @@ class Order extends Model
         return $this->belongsTo(User::class, 'client_id');
     }
 
-    public function admin()
+    public function files()
     {
-        return $this->belongsTo(User::class, 'admin_id');
+        return $this->hasMany(OrderFile::class);
     }
 
     public function messages()
@@ -66,17 +66,34 @@ class Order extends Model
         return $this->hasMany(Message::class);
     }
 
-    public function files()
+    public function academicLevel()
     {
-        return $this->hasMany(OrderFile::class);
+        return $this->belongsTo(AcademicLevel::class, 'academic_level', 'slug');
+    }
+
+    public function subjectCategory()
+    {
+        return $this->belongsTo(SubjectCategory::class, 'subject', 'slug');
+    }
+
+    public function selectedAddons()
+    {
+        return $this->belongsToMany(Addon::class, 'order_addon')
+            ->withPivot('price')
+            ->withTimestamps();
     }
 
     public function calculateTotalPrice()
     {
-        $basePrice = $this->pages * $this->price_per_page;
-        $discountAmount = $basePrice * ($this->discount / 100);
-        $this->total_price = $basePrice - $discountAmount;
+        $pricingService = new OrderPricingService($this);
+        $this->total_price = $pricingService->calculateTotalPrice();
         return $this->total_price;
+    }
+
+    public function getPriceBreakdown()
+    {
+        $pricingService = new OrderPricingService($this);
+        return $pricingService->getPriceBreakdown();
     }
 
     public function isOverdue()
@@ -92,32 +109,6 @@ class Order extends Model
     public function canBeEdited()
     {
         return $this->status === 'draft' || ($this->status === 'active' && $this->revision_count < 3);
-    }
-
-    public function markAsPaid($paymentMethod)
-    {
-        $this->update([
-            'payment_status' => 'paid',
-            'payment_method' => $paymentMethod,
-            'paid_at' => now(),
-        ]);
-    }
-
-    public function assignToAdmin($adminId)
-    {
-        $this->update([
-            'admin_id' => $adminId,
-            'assigned_at' => now(),
-            'status' => 'active',
-        ]);
-    }
-
-    public function markAsCompleted()
-    {
-        $this->update([
-            'status' => 'completed',
-            'completed_at' => now(),
-        ]);
     }
 
     public function requestRevision()
@@ -146,5 +137,35 @@ class Order extends Model
             $q->where('status', 'active')
                 ->where('deadline', '<', now()->addDays(2));
         });
+    }
+
+    public function scopeByStatus($query, $status)
+    {
+        return $query->where('status', $status);
+    }
+
+    public function scopeByPaymentStatus($query, $status)
+    {
+        return $query->where('payment_status', $status);
+    }
+
+    public function scopeByDateRange($query, $startDate, $endDate)
+    {
+        return $query->whereBetween('created_at', [$startDate, $endDate]);
+    }
+
+    public function scopeByAcademicLevel($query, $level)
+    {
+        return $query->where('academic_level', $level);
+    }
+
+    public function scopeBySubject($query, $subject)
+    {
+        return $query->where('subject', $subject);
+    }
+
+    public function scopeByRole($query, $role)
+    {
+        return $query->where('role', $role);
     }
 }
