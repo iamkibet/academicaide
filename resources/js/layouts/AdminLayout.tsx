@@ -25,6 +25,32 @@ export default function AdminLayout({ children }: PropsWithChildren<Props>) {
             href: '/admin/pricing',
             icon: 'M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z',
         },
+        { name: '---', href: '', icon: '' },
+        {
+            name: 'Assignment Types',
+            href: '/admin/assignment-types',
+            icon: 'M9 17v-6h13v6M9 5v6h13V5M5 17h.01M5 11h.01M5 5h.01',
+        },
+        {
+            name: 'Service Types',
+            href: '/admin/service-types',
+            icon: 'M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1',
+        },
+        {
+            name: 'Languages',
+            href: '/admin/languages',
+            icon: 'M12 4v16m8-8H4',
+        },
+        {
+            name: 'Line Spacing',
+            href: '/admin/line-spacings',
+            icon: 'M4 6h16M4 12h16M4 18h16',
+        },
+        {
+            name: 'Pricing Config',
+            href: '/admin/pricing-config',
+            icon: 'M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z',
+        },
         {
             name: 'Academic Levels',
             href: '/admin/levels',

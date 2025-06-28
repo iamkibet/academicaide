@@ -7,6 +7,9 @@ use App\Http\Controllers\Admin\SubjectController;
 use App\Http\Controllers\Admin\AcademicLevelController;
 use App\Http\Controllers\Admin\DeadlineController;
 use App\Http\Controllers\Admin\AddonController;
+use App\Http\Controllers\Admin\AssignmentTypeController;
+use App\Http\Controllers\Admin\ServiceTypeController;
+use App\Http\Controllers\Admin\LineSpacingController;
 use Illuminate\Support\Facades\Route;
 
 Route::middleware(['web', 'auth', 'verified', 'role:A'])->prefix('admin')->name('admin.')->group(function () {
@@ -59,4 +62,8 @@ Route::middleware(['web', 'auth', 'verified', 'role:A'])->prefix('admin')->name(
         Route::patch('/subjects/{subject}', [SubjectController::class, 'update'])->name('subjects.update');
         Route::delete('/subjects/{subject}', [SubjectController::class, 'destroy'])->name('subjects.destroy');
     });
+
+    Route::resource('assignment-types', AssignmentTypeController::class)->except(['show']);
+    Route::resource('service-types', ServiceTypeController::class)->except(['show']);
+    Route::resource('line-spacings', LineSpacingController::class)->only(['index', 'store', 'update', 'destroy']);
 });

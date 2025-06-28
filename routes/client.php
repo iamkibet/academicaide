@@ -29,4 +29,16 @@ Route::middleware(['web', 'auth', 'verified', 'role:U'])->prefix('client')->name
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+
+    // Drafts
+    Route::post('/orders/draft', [OrderController::class, 'saveDraft'])->name('orders.draft.save');
+    Route::patch('/orders/{order}/draft', [OrderController::class, 'updateDraft'])->name('orders.draft.update');
+    Route::delete('/orders/{order}/draft', [OrderController::class, 'discardDraft'])->name('orders.draft.discard');
+
+    // File upload/removal for drafts
+    Route::post('/orders/{order}/files', [OrderController::class, 'uploadFile'])->name('orders.files.upload');
+    Route::delete('/orders/{order}/files/{file}', [OrderController::class, 'removeFile'])->name('orders.files.remove');
+
+    // Submit order (after payment)
+    Route::post('/orders/{order}/submit', [OrderController::class, 'submitOrder'])->name('orders.submit');
 });

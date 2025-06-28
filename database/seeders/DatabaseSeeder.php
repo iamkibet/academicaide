@@ -33,6 +33,13 @@ class DatabaseSeeder extends Seeder
         ]);
 
         // Seed pricing data
-        $this->call(PricingSeeder::class);
+        $this->call([
+            PricingSeeder::class,
+            AssignmentTypeSeeder::class,
+            ServiceTypeSeeder::class,
+            LanguageSeeder::class,
+            LineSpacingSeeder::class,
+            PricingConfigSeeder::class,
+        ]);
     }
 }

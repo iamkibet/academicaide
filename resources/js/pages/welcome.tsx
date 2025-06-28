@@ -1,353 +1,360 @@
-import { type SharedData } from '@/types';
-import { Head, Link, usePage } from '@inertiajs/react';
+import { DateTimeInput, FormField, NumberInput, SelectInput, SubmitButton, Textarea, TextInput } from '@/components/ui/FormComponents';
+import {
+    CARD_ENTER,
+    CARD_INITIAL,
+    CARD_TRANSITION,
+    FeatureCard,
+    SectionWrapper,
+    TestimonialCard,
+    WriterCard,
+} from '@/components/ui/SectionComponents';
+import GuestLayout from '@/layouts/GuestLayout';
+import { AcademicCapIcon, CheckCircleIcon, ClockIcon, DocumentTextIcon, RocketLaunchIcon, ShieldCheckIcon } from '@heroicons/react/24/outline';
+import { Head, Link, useForm } from '@inertiajs/react';
+import { AnimatePresence, motion } from 'framer-motion';
+import { ChangeEvent, FormEvent } from 'react';
+import { useInView } from 'react-intersection-observer';
+
+// Configuration
+const WRITERS = [
+    {
+        name: 'Edward M.',
+        rating: 4.9,
+        degree: "Master's degree",
+        subjects: ['Business and Management'],
+    },
+    {
+        name: 'Stephanie S.',
+        rating: 4.9,
+        degree: "Bachelor's degree",
+        subjects: ['English', 'History'],
+    },
+    {
+        name: 'Maison T.',
+        rating: 4.9,
+        degree: "Bachelor's degree",
+        subjects: ['Psychology', 'Criminology'],
+    },
+    {
+        name: 'Martin S.',
+        rating: 4.8,
+        degree: "Master's degree",
+        subjects: ['Education', 'Social work'],
+    },
+    {
+        name: 'Diana C.',
+        rating: 5.0,
+        degree: "Bachelor's degree",
+        subjects: ['Nursing', 'Healthcare'],
+    },
+];
+
+const TESTIMONIALS = [
+    {
+        writer: 'Kaylin G.',
+        type: 'Research paper',
+        content: 'The experts are super friendly and respond within few minutes. And the content they deliver is always on flick. Thanks!',
+        customerId: '#315479',
+        date: 'Mar 11, 2024',
+    },
+    {
+        writer: 'Kate D.',
+        type: 'Coursework',
+        content: 'The expert finished my paper a few days before the deadline and the writing was lit.',
+        customerId: '#315400',
+        date: 'Mar 6, 2024',
+    },
+    {
+        writer: 'Colton M.',
+        type: 'Essay',
+        content: 'I was looking for someone who can write essay for me. The writer I chose was very quick and the essay was well written.',
+        customerId: '#315358',
+        date: 'Feb 22, 2024',
+    },
+];
+
+const FEATURES = [
+    {
+        title: 'Original writing',
+        description:
+            "Our essay writing service guarantees high originality. Our experts don't copy-paste or use AI to write a paper, maintaining authenticity.",
+    },
+    {
+        title: '24/7 support by your side',
+        description:
+            'You can ask us to "write my essay for me" anytime, even in the middle of the night. Our customer service team is available around the clock.',
+    },
+    {
+        title: 'Personal data safety',
+        description:
+            'Hire a paper writer without worrying about the security of your personal and financial information. We prioritize your data security.',
+    },
+    {
+        title: 'Unlimited edits free of charge',
+        description:
+            'Enjoy free revisions within 14 to 30 days after order completion. Our expert essay writers are committed to ensuring your paper meets your requirements.',
+    },
+];
+
+type FormData = {
+    type: string;
+    deadline: string;
+    pages: string;
+    subject: string;
+    instructions: string;
+};
 
 export default function Welcome() {
-    const { auth } = usePage<SharedData>().props;
+    const { data, setData, post, processing, errors } = useForm<FormData>({
+        type: '',
+        deadline: '',
+        pages: '',
+        subject: '',
+        instructions: '',
+    });
+
+    // Intersection observers for scroll animations
+    const [heroRef, heroInView] = useInView({ threshold: 0.1, triggerOnce: true });
+    const [writersRef, writersInView] = useInView({ threshold: 0.1, triggerOnce: true });
+    const [testimonialsRef, testimonialsInView] = useInView({ threshold: 0.1, triggerOnce: true });
+    const [featuresRef, featuresInView] = useInView({ threshold: 0.1, triggerOnce: true });
+
+    const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
+        e.preventDefault();
+        post(route('orders.store'));
+    };
+
+    const handleChange = (field: keyof FormData) => (e: ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
+        setData(field, e.target.value);
+    };
 
     return (
-        <>
+        <GuestLayout>
             <Head title="Welcome to AcademicAide">
-                <link rel="preconnect" href="https://fonts.bunny.net" />
-                <link href="https://fonts.bunny.net/css?family=instrument-sans:400,500,600" rel="stylesheet" />
+                <link href="https://fonts.bunny.net/css?family=inter:400,500,600,700" rel="stylesheet" />
             </Head>
-            <div className="min-h-screen bg-white dark:bg-gray-900">
-                {/* Navigation */}
-                <header className="fixed top-0 right-0 left-0 z-50 bg-white shadow-sm dark:bg-gray-800">
-                    <nav className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-                        <div className="flex h-16 items-center justify-between">
-                            <div className="flex items-center">
-                                <Link href="/" className="flex items-center">
-                                    <h1 className="text-2xl font-bold text-blue-600">AcademicAide</h1>
-                                </Link>
-                                <div className="hidden md:ml-10 md:flex md:space-x-8">
-                                    <Link href="#services" className="text-gray-600 hover:text-gray-900 dark:text-gray-300 dark:hover:text-white">
-                                        Services
-                                    </Link>
-                                    <Link href="#pricing" className="text-gray-600 hover:text-gray-900 dark:text-gray-300 dark:hover:text-white">
-                                        Pricing
-                                    </Link>
-                                    <Link href="#about" className="text-gray-600 hover:text-gray-900 dark:text-gray-300 dark:hover:text-white">
-                                        About Us
-                                    </Link>
-                                    <Link href="#reviews" className="text-gray-600 hover:text-gray-900 dark:text-gray-300 dark:hover:text-white">
-                                        Reviews
-                                    </Link>
-                                </div>
-                            </div>
-                            <div className="flex items-center gap-4">
-                                {auth.user ? (
-                                    <Link
-                                        href={route('dashboard')}
-                                        className="inline-block rounded-md bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700"
-                                    >
-                                        Dashboard
-                                    </Link>
-                                ) : (
-                                    <>
-                                        <Link
-                                            href={route('login')}
-                                            className="text-sm font-medium text-gray-700 hover:text-gray-900 dark:text-gray-300 dark:hover:text-white"
-                                        >
-                                            Log in
-                                        </Link>
-                                        <Link
-                                            href={route('register')}
-                                            className="inline-block rounded-md bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700"
-                                        >
-                                            Get Started
-                                        </Link>
-                                    </>
-                                )}
-                            </div>
-                        </div>
-                    </nav>
-                </header>
 
-                {/* Hero Section */}
-                <div className="relative pt-24">
-                    <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-                        <div className="text-center">
-                            <h1 className="text-4xl font-bold tracking-tight text-gray-900 sm:text-6xl dark:text-white">
-                                Professional Academic Writing Services
+            {/* Hero Section */}
+            <section ref={heroRef} className="relative overflow-hidden bg-gradient-to-b from-blue-50 to-white dark:from-gray-900 dark:to-gray-800">
+                {/* Decorative background elements */}
+                <div className="absolute inset-0 -z-10">
+                    <div className="absolute inset-0 bg-gradient-to-br from-blue-50 to-blue-100 dark:from-blue-900 dark:to-blue-800" />
+                    <div className="absolute top-0 left-1/2 -translate-x-1/2 blur-3xl xl:-top-6" aria-hidden="true">
+                        <div
+                            className="aspect-[1155/678] w-[72.1875rem] bg-gradient-to-tr from-blue-200 to-blue-400 opacity-30"
+                            style={{
+                                clipPath:
+                                    'polygon(74.1% 44.1%, 100% 61.6%, 97.5% 26.9%, 85.5% 0.1%, 80.7% 2%, 72.5% 32.5%, 60.2% 62.4%, 52.4% 68.1%, 47.5% 58.3%, 45.2% 34.5%, 27.5% 76.7%, 0.1% 64.9%, 17.9% 100%, 27.6% 76.8%, 76.1% 97.7%, 74.1% 44.1%)',
+                            }}
+                        />
+                    </div>
+                </div>
+
+                <div className="mx-auto max-w-7xl px-4 py-24 sm:px-6 lg:px-8 lg:py-32">
+                    <motion.div
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={heroInView ? CARD_ENTER : CARD_INITIAL}
+                        transition={CARD_TRANSITION}
+                        className="grid items-center gap-16 lg:grid-cols-2"
+                    >
+                        <div className="space-y-8">
+                            <div className="inline-flex items-center rounded-full bg-blue-100 px-4 py-1.5 text-sm font-medium text-blue-600 dark:bg-blue-900 dark:text-blue-300">
+                                <AcademicCapIcon className="mr-2 h-5 w-5" />
+                                Trusted by 10,000+ Students
+                            </div>
+                            <h1 className="text-5xl leading-[1.15] font-bold tracking-tight text-gray-900 dark:text-white">
+                                Transform Academic Stress
+                                <br />
+                                <span className="bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">Into Success</span>
                             </h1>
-                            <p className="mt-6 text-lg leading-8 text-gray-600 dark:text-gray-300">
-                                Get expert help with your academic papers, essays, and research projects. Our team of qualified writers is here to
-                                support your academic success.
+                            <p className="text-xl leading-relaxed text-gray-600 dark:text-gray-300">
+                                Premium writing assistance with 24/7 expert support, guaranteed originality, and on-time delivery.
                             </p>
-                            <div className="mt-10 flex items-center justify-center gap-x-6">
-                                <Link
-                                    href={route('register')}
-                                    className="rounded-md bg-blue-600 px-6 py-3 text-lg font-semibold text-white shadow-sm hover:bg-blue-500"
-                                >
-                                    Place Your Order
-                                </Link>
-                                <Link href="#features" className="text-lg leading-6 font-semibold text-gray-900 dark:text-white">
-                                    Learn more <span aria-hidden="true">→</span>
-                                </Link>
-                            </div>
-                        </div>
-                    </div>
-                </div>
 
-                {/* Services Section */}
-                <div id="services" className="py-24 sm:py-32">
-                    <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-                        <div className="mx-auto max-w-2xl lg:text-center">
-                            <h2 className="text-base leading-7 font-semibold text-blue-600">Our Services</h2>
-                            <p className="mt-2 text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl dark:text-white">
-                                Professional Writing Services
-                            </p>
-                        </div>
-                        <div className="mx-auto mt-16 max-w-2xl sm:mt-20 lg:mt-24 lg:max-w-none">
-                            <dl className="grid max-w-xl grid-cols-1 gap-x-8 gap-y-16 lg:max-w-none lg:grid-cols-3">
-                                {[
-                                    {
-                                        title: 'Essay Writing',
-                                        description: 'Custom essays written by expert writers with advanced degrees in your field.',
-                                    },
-                                    {
-                                        title: 'Research Papers',
-                                        description: 'In-depth research papers with proper citations and academic formatting.',
-                                    },
-                                    {
-                                        title: 'Dissertation Help',
-                                        description: 'Comprehensive support for your dissertation or thesis writing.',
-                                    },
-                                ].map((service) => (
-                                    <div key={service.title} className="flex flex-col">
-                                        <dt className="text-xl leading-7 font-semibold text-gray-900 dark:text-white">{service.title}</dt>
-                                        <dd className="mt-4 flex flex-auto flex-col text-base leading-7 text-gray-600 dark:text-gray-300">
-                                            <p className="flex-auto">{service.description}</p>
-                                        </dd>
+                            <div className="grid gap-4 sm:grid-cols-2">
+                                <div className="flex items-center gap-3 rounded-lg bg-white p-4 shadow-sm dark:bg-gray-800">
+                                    <div className="rounded-full bg-green-100 p-2 dark:bg-green-900">
+                                        <CheckCircleIcon className="h-5 w-5 text-green-600 dark:text-green-300" />
                                     </div>
-                                ))}
-                            </dl>
-                        </div>
-                    </div>
-                </div>
-
-                {/* Pricing Section */}
-                <div id="pricing" className="bg-gray-50 py-24 sm:py-32 dark:bg-gray-800">
-                    <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-                        <div className="mx-auto max-w-2xl text-center">
-                            <h2 className="text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl dark:text-white">
-                                Simple, Transparent Pricing
-                            </h2>
-                            <p className="mt-6 text-lg leading-8 text-gray-600 dark:text-gray-300">Choose the perfect plan for your academic needs</p>
-                        </div>
-                        <div className="mx-auto mt-16 grid max-w-lg grid-cols-1 items-center gap-y-6 sm:mt-20 sm:gap-y-0 lg:max-w-4xl lg:grid-cols-3">
-                            {[
-                                {
-                                    name: 'Basic',
-                                    price: '$10',
-                                    description: 'Perfect for short essays and assignments',
-                                    features: ['500 words', '24-hour delivery', 'Basic formatting', 'Free revisions'],
-                                },
-                                {
-                                    name: 'Standard',
-                                    price: '$15',
-                                    description: 'Ideal for research papers and longer essays',
-                                    features: ['1000 words', '12-hour delivery', 'Advanced formatting', 'Free revisions', 'Bibliography'],
-                                },
-                                {
-                                    name: 'Premium',
-                                    price: '$20',
-                                    description: 'Best for complex assignments and dissertations',
-                                    features: [
-                                        '2000+ words',
-                                        '6-hour delivery',
-                                        'Premium formatting',
-                                        'Free revisions',
-                                        'Bibliography',
-                                        'Plagiarism report',
-                                    ],
-                                },
-                            ].map((plan) => (
-                                <div
-                                    key={plan.name}
-                                    className="relative flex flex-col rounded-2xl bg-white p-8 shadow-sm ring-1 ring-gray-900/5 dark:bg-gray-700"
-                                >
-                                    <h3 className="text-lg leading-8 font-semibold text-gray-900 dark:text-white">{plan.name}</h3>
-                                    <p className="mt-4 text-sm leading-6 text-gray-600 dark:text-gray-300">{plan.description}</p>
-                                    <p className="mt-6 flex items-baseline gap-x-1">
-                                        <span className="text-4xl font-bold tracking-tight text-gray-900 dark:text-white">{plan.price}</span>
-                                        <span className="text-sm leading-6 font-semibold text-gray-600 dark:text-gray-300">/page</span>
-                                    </p>
-                                    <ul role="list" className="mt-8 space-y-3 text-sm leading-6 text-gray-600 dark:text-gray-300">
-                                        {plan.features.map((feature) => (
-                                            <li key={feature} className="flex gap-x-3">
-                                                <svg className="h-6 w-5 flex-none text-blue-600" viewBox="0 0 20 20" fill="currentColor">
-                                                    <path
-                                                        fillRule="evenodd"
-                                                        d="M16.704 4.153a.75.75 0 01.143 1.052l-8 10.5a.75.75 0 01-1.127.075l-4.5-4.5a.75.75 0 011.06-1.06l3.894 3.893 7.48-9.817a.75.75 0 011.05-.143z"
-                                                        clipRule="evenodd"
-                                                    />
-                                                </svg>
-                                                {feature}
-                                            </li>
-                                        ))}
-                                    </ul>
-                                    <Link
-                                        href={route('register')}
-                                        className="mt-8 block rounded-md bg-blue-600 px-3 py-2 text-center text-sm leading-6 font-semibold text-white shadow-sm hover:bg-blue-500"
-                                    >
-                                        Get started
-                                    </Link>
+                                    <div>
+                                        <p className="font-medium text-gray-900 dark:text-white">4.9/5 Rating</p>
+                                        <p className="text-sm text-gray-500 dark:text-gray-400">Expert Writers</p>
+                                    </div>
                                 </div>
-                            ))}
+                                <div className="flex items-center gap-3 rounded-lg bg-white p-4 shadow-sm dark:bg-gray-800">
+                                    <div className="rounded-full bg-blue-100 p-2 dark:bg-blue-900">
+                                        <ClockIcon className="h-5 w-5 text-blue-600 dark:text-blue-300" />
+                                    </div>
+                                    <div>
+                                        <p className="font-medium text-gray-900 dark:text-white">24/7 Support</p>
+                                        <p className="text-sm text-gray-500 dark:text-gray-400">Always Available</p>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
-                    </div>
-                </div>
 
-                {/* CTA Section */}
-                <div className="bg-blue-600">
-                    <div className="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8 lg:py-16">
-                        <div className="text-center">
-                            <h2 className="text-3xl font-bold tracking-tight text-white sm:text-4xl">Ready to get started?</h2>
-                            <p className="mx-auto mt-4 max-w-2xl text-lg text-blue-100">
-                                Join thousands of students who trust AcademicAide for their academic success.
-                            </p>
-                            <div className="mt-8">
-                                <Link
-                                    href={route('register')}
-                                    className="inline-block rounded-md bg-white px-6 py-3 text-lg font-semibold text-blue-600 shadow-sm hover:bg-blue-50"
-                                >
-                                    Create Account
-                                </Link>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+                        {/* Order Form */}
+                        <motion.div initial={{ scale: 0.95 }} animate={{ scale: 1 }} className="group relative">
+                            <div className="absolute inset-0 rounded-2xl bg-gradient-to-r from-blue-600 to-purple-600 opacity-20 blur-xl filter transition-opacity duration-300 group-hover:opacity-30" />
 
-                {/* Footer */}
-                <footer className="bg-white dark:bg-gray-800">
-                    <div className="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
-                        <div className="grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-4">
-                            <div>
-                                <h3 className="text-sm font-semibold text-gray-900 dark:text-white">Company</h3>
-                                <ul className="mt-4 space-y-4">
-                                    <li>
-                                        <Link
-                                            href="#about"
-                                            className="text-sm text-gray-600 hover:text-gray-900 dark:text-gray-300 dark:hover:text-white"
-                                        >
-                                            About Us
-                                        </Link>
-                                    </li>
-                                    <li>
-                                        <Link
-                                            href="#careers"
-                                            className="text-sm text-gray-600 hover:text-gray-900 dark:text-gray-300 dark:hover:text-white"
-                                        >
-                                            Careers
-                                        </Link>
-                                    </li>
-                                    <li>
-                                        <Link
-                                            href="#contact"
-                                            className="text-sm text-gray-600 hover:text-gray-900 dark:text-gray-300 dark:hover:text-white"
-                                        >
-                                            Contact
-                                        </Link>
-                                    </li>
-                                </ul>
-                            </div>
-                            <div>
-                                <h3 className="text-sm font-semibold text-gray-900 dark:text-white">Services</h3>
-                                <ul className="mt-4 space-y-4">
-                                    <li>
-                                        <Link
-                                            href="#essays"
-                                            className="text-sm text-gray-600 hover:text-gray-900 dark:text-gray-300 dark:hover:text-white"
-                                        >
-                                            Essays
-                                        </Link>
-                                    </li>
-                                    <li>
-                                        <Link
-                                            href="#research"
-                                            className="text-sm text-gray-600 hover:text-gray-900 dark:text-gray-300 dark:hover:text-white"
-                                        >
-                                            Research Papers
-                                        </Link>
-                                    </li>
-                                    <li>
-                                        <Link
-                                            href="#dissertations"
-                                            className="text-sm text-gray-600 hover:text-gray-900 dark:text-gray-300 dark:hover:text-white"
-                                        >
-                                            Dissertations
-                                        </Link>
-                                    </li>
-                                </ul>
-                            </div>
-                            <div>
-                                <h3 className="text-sm font-semibold text-gray-900 dark:text-white">Support</h3>
-                                <ul className="mt-4 space-y-4">
-                                    <li>
-                                        <Link
-                                            href="#help"
-                                            className="text-sm text-gray-600 hover:text-gray-900 dark:text-gray-300 dark:hover:text-white"
-                                        >
-                                            Help Center
-                                        </Link>
-                                    </li>
-                                    <li>
-                                        <Link
-                                            href="#faq"
-                                            className="text-sm text-gray-600 hover:text-gray-900 dark:text-gray-300 dark:hover:text-white"
-                                        >
-                                            FAQ
-                                        </Link>
-                                    </li>
-                                    <li>
-                                        <Link
-                                            href="#terms"
-                                            className="text-sm text-gray-600 hover:text-gray-900 dark:text-gray-300 dark:hover:text-white"
-                                        >
-                                            Terms of Service
-                                        </Link>
-                                    </li>
-                                </ul>
-                            </div>
-                            <div>
-                                <h3 className="text-sm font-semibold text-gray-900 dark:text-white">Connect</h3>
-                                <ul className="mt-4 space-y-4">
-                                    <li>
-                                        <Link
-                                            href="#facebook"
-                                            className="text-sm text-gray-600 hover:text-gray-900 dark:text-gray-300 dark:hover:text-white"
-                                        >
-                                            Facebook
-                                        </Link>
-                                    </li>
-                                    <li>
-                                        <Link
-                                            href="#twitter"
-                                            className="text-sm text-gray-600 hover:text-gray-900 dark:text-gray-300 dark:hover:text-white"
-                                        >
-                                            Twitter
-                                        </Link>
-                                    </li>
-                                    <li>
-                                        <Link
-                                            href="#linkedin"
-                                            className="text-sm text-gray-600 hover:text-gray-900 dark:text-gray-300 dark:hover:text-white"
-                                        >
-                                            LinkedIn
-                                        </Link>
-                                    </li>
-                                </ul>
-                            </div>
+                            <form
+                                onSubmit={handleSubmit}
+                                className="relative rounded-2xl border border-gray-100 bg-white p-8 shadow-2xl shadow-blue-100/50 dark:border-gray-700 dark:bg-gray-800 dark:shadow-none"
+                            >
+                                <div className="mb-8 flex items-center justify-between">
+                                    <div>
+                                        <h2 className="text-2xl font-bold text-gray-900 dark:text-white">Start Your Order</h2>
+                                        <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">Quick and easy process</p>
+                                    </div>
+                                    <div className="rounded-lg bg-blue-100 p-2 dark:bg-blue-900">
+                                        <DocumentTextIcon className="h-6 w-6 text-blue-600 dark:text-blue-300" />
+                                    </div>
+                                </div>
+
+                                <div className="space-y-6">
+                                    <FormField label="Type of Paper" error={errors.type} htmlFor="type">
+                                        <SelectInput
+                                            id="type"
+                                            value={data.type}
+                                            onChange={handleChange('type')}
+                                            options={[
+                                                { value: 'essay', label: 'Essay' },
+                                                { value: 'research', label: 'Research Paper' },
+                                                { value: 'coursework', label: 'Coursework' },
+                                            ]}
+                                        />
+                                    </FormField>
+
+                                    <FormField label="Deadline" error={errors.deadline} htmlFor="deadline">
+                                        <DateTimeInput id="deadline" value={data.deadline} onChange={handleChange('deadline')} />
+                                    </FormField>
+
+                                    <FormField label="Number of Pages" error={errors.pages} htmlFor="pages">
+                                        <NumberInput id="pages" value={data.pages} onChange={handleChange('pages')} min="1" unit="pages" />
+                                    </FormField>
+
+                                    <FormField label="Subject Area" error={errors.subject} htmlFor="subject">
+                                        <TextInput
+                                            id="subject"
+                                            value={data.subject}
+                                            onChange={handleChange('subject')}
+                                            placeholder="e.g., Business, Psychology"
+                                        />
+                                    </FormField>
+
+                                    <FormField label="Instructions" error={errors.instructions} htmlFor="instructions">
+                                        <Textarea
+                                            id="instructions"
+                                            value={data.instructions}
+                                            onChange={handleChange('instructions')}
+                                            rows={3}
+                                            placeholder="Detailed requirements, formatting guidelines, etc."
+                                        />
+                                    </FormField>
+
+                                    <SubmitButton processing={processing} />
+                                </div>
+                            </form>
+                        </motion.div>
+                    </motion.div>
+                </div>
+            </section>
+
+            {/* Writers Section */}
+            <SectionWrapper
+                title="Meet Our Expert Writers"
+                description="Quality-driven professionals with proven academic backgrounds"
+                ref={writersRef}
+            >
+                <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+                    <AnimatePresence>
+                        {WRITERS.map((writer, idx) => (
+                            <motion.div
+                                key={writer.name}
+                                initial={CARD_INITIAL}
+                                animate={writersInView ? CARD_ENTER : CARD_INITIAL}
+                                transition={{ ...CARD_TRANSITION, delay: idx * 0.1 }}
+                                className="group rounded-xl border border-gray-100 bg-white p-6 shadow-sm transition-all duration-300 hover:scale-[1.02] hover:shadow-md dark:border-gray-700 dark:bg-gray-800"
+                            >
+                                <WriterCard writer={writer} />
+                            </motion.div>
+                        ))}
+                    </AnimatePresence>
+                </div>
+            </SectionWrapper>
+
+            {/* Testimonials Section */}
+            <SectionWrapper
+                title="Student Success Stories"
+                description="See how we've helped students achieve academic excellence"
+                bgClass="bg-gray-50 dark:bg-gray-900"
+                ref={testimonialsRef}
+            >
+                <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+                    {TESTIMONIALS.map((testimonial, idx) => (
+                        <motion.div
+                            key={testimonial.customerId}
+                            initial={CARD_INITIAL}
+                            animate={testimonialsInView ? CARD_ENTER : CARD_INITIAL}
+                            transition={{ ...CARD_TRANSITION, delay: idx * 0.1 }}
+                            className="group rounded-xl border border-gray-100 bg-white p-6 shadow-sm transition-all duration-300 hover:scale-[1.02] hover:shadow-md dark:border-gray-700 dark:bg-gray-800"
+                        >
+                            <TestimonialCard testimonial={testimonial} />
+                        </motion.div>
+                    ))}
+                </div>
+            </SectionWrapper>
+
+            {/* Features Section */}
+            <SectionWrapper title="Why Choose AcademicAide" ref={featuresRef}>
+                <div className="grid gap-6 md:grid-cols-2">
+                    {FEATURES.map((feature, idx) => (
+                        <motion.div
+                            key={feature.title}
+                            initial={CARD_INITIAL}
+                            animate={featuresInView ? CARD_ENTER : CARD_INITIAL}
+                            transition={{ ...CARD_TRANSITION, delay: idx * 0.1 }}
+                            className="group rounded-xl border border-gray-100 bg-white p-6 shadow-sm transition-all duration-300 hover:scale-[1.02] hover:shadow-md dark:border-gray-700 dark:bg-gray-800"
+                        >
+                            <FeatureCard feature={feature} />
+                        </motion.div>
+                    ))}
+                </div>
+            </SectionWrapper>
+
+            {/* CTA Section */}
+            <div className="relative overflow-hidden bg-gradient-to-r from-blue-600 to-purple-600">
+                <div className="absolute inset-0">
+                    <div className="absolute inset-0 bg-gradient-to-r from-blue-600 to-purple-600 opacity-90" />
+                    <div className="absolute inset-0 bg-[url('/grid.svg')] opacity-10" />
+                </div>
+                <div className="relative mx-auto max-w-7xl px-4 py-20 text-center sm:px-6 lg:px-8">
+                    <motion.div
+                        initial={{ opacity: 0, scale: 0.95 }}
+                        animate={{ opacity: 1, scale: 1 }}
+                        transition={{ duration: 0.5 }}
+                        className="space-y-6"
+                    >
+                        <div className="inline-flex items-center rounded-full bg-white/10 px-4 py-1.5 text-sm font-medium text-white backdrop-blur-sm">
+                            <ShieldCheckIcon className="mr-2 h-5 w-5" />
+                            Secure & Confidential
                         </div>
-                        <div className="mt-8 border-t border-gray-200 pt-8 dark:border-gray-700">
-                            <p className="text-sm text-gray-500 dark:text-gray-400">
-                                © {new Date().getFullYear()} AcademicAide. All rights reserved.
-                            </p>
+                        <h2 className="text-4xl font-bold text-white">Ready to Elevate Your Academic Performance?</h2>
+                        <p className="mx-auto max-w-2xl text-xl text-blue-100">
+                            Join thousands of successful students who trust AcademicAide with their academic goals
+                        </p>
+                        <div className="mt-8">
+                            <Link
+                                href={route('register')}
+                                className="inline-flex transform items-center rounded-lg bg-white px-8 py-4 font-semibold text-blue-600 shadow-md transition-all duration-200 hover:scale-[1.02] hover:shadow-lg active:scale-95"
+                            >
+                                <RocketLaunchIcon className="mr-2 h-5 w-5" />
+                                Get Started Now
+                            </Link>
                         </div>
-                    </div>
-                </footer>
+                    </motion.div>
+                </div>
             </div>
-        </>
+        </GuestLayout>
     );
 }

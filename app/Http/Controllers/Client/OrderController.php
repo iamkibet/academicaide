@@ -315,4 +315,138 @@ class OrderController extends Controller
 
         return back()->with('success', 'Order approved and marked as completed.');
     }
+
+    /**
+     * Save a new draft order for the authenticated user.
+     */
+    public function saveDraft(Request $request)
+    {
+        $user = $request->user();
+        // Only one draft per user (optional: update if exists)
+        $existingDraft = $user->orders()->where('status', 'draft')->first();
+        if ($existingDraft) {
+            return $this->updateDraft($request, $existingDraft);
+        }
+        $validated = $request->validate([
+            'assignment_type' => 'nullable|string',
+            'service_type' => 'nullable|string',
+            'academic_level' => 'nullable|string',
+            'language' => 'nullable|string',
+            'pages' => 'nullable|integer|min:1',
+            'words' => 'nullable|integer|min:0',
+            'line_spacing' => 'nullable|string',
+            'deadline' => 'nullable|date',
+            'instructions' => 'nullable|string',
+            'client_notes' => 'nullable|string',
+            'addons' => 'nullable|array',
+            'addons.*' => 'string',
+            'subject' => 'nullable|string',
+            'files' => 'nullable|array',
+            'files.*' => 'file|max:10240',
+        ]);
+        $order = $user->orders()->create(array_merge($validated, [
+            'status' => 'draft',
+        ]));
+        return response()->json(['draft' => $order], 201);
+    }
+
+    /**
+     * Update an existing draft order.
+     */
+    public function updateDraft(Request $request, Order $order)
+    {
+        $user = $request->user();
+        if ($order->user_id !== $user->id || $order->status !== 'draft') {
+            abort(403);
+        }
+        $validated = $request->validate([
+            'assignment_type' => 'nullable|string',
+            'service_type' => 'nullable|string',
+            'academic_level' => 'nullable|string',
+            'language' => 'nullable|string',
+            'pages' => 'nullable|integer|min:1',
+            'words' => 'nullable|integer|min:0',
+            'line_spacing' => 'nullable|string',
+            'deadline' => 'nullable|date',
+            'instructions' => 'nullable|string',
+            'client_notes' => 'nullable|string',
+            'addons' => 'nullable|array',
+            'addons.*' => 'string',
+            'subject' => 'nullable|string',
+            'files' => 'nullable|array',
+            'files.*' => 'file|max:10240',
+        ]);
+        $order->update($validated);
+        return response()->json(['draft' => $order]);
+    }
+
+    /**
+     * Discard/delete a draft order.
+     */
+    public function discardDraft(Request $request, Order $order)
+    {
+        $user = $request->user();
+        if ($order->user_id !== $user->id || $order->status !== 'draft') {
+            abort(403);
+        }
+        $order->delete();
+        return response()->json(['message' => 'Draft discarded.']);
+    }
+
+    /**
+     * Upload file(s) to a draft order.
+     */
+    public function uploadFile(Request $request, Order $order)
+    {
+        $user = $request->user();
+        if ($order->user_id !== $user->id || $order->status !== 'draft') {
+            abort(403);
+        }
+        $request->validate([
+            'files' => 'required|array',
+            'files.*' => 'file|max:10240', // 10MB per file
+        ]);
+        $uploadedFiles = [];
+        foreach ($request->file('files') as $file) {
+            $path = $file->store('order-files');
+            $orderFile = $order->files()->create([
+                'filename' => basename($path),
+                'original_filename' => $file->getClientOriginalName(),
+                'mime_type' => $file->getMimeType(),
+                'path' => $path,
+                'size' => $file->getSize(),
+            ]);
+            $uploadedFiles[] = $orderFile;
+        }
+        return response()->json(['files' => $uploadedFiles]);
+    }
+
+    /**
+     * Remove a file from a draft order.
+     */
+    public function removeFile(Request $request, Order $order, $fileId)
+    {
+        $user = $request->user();
+        if ($order->user_id !== $user->id || $order->status !== 'draft') {
+            abort(403);
+        }
+        $file = $order->files()->findOrFail($fileId);
+        $file->delete();
+        return response()->json(['message' => 'File removed.']);
+    }
+
+    /**
+     * Submit order (after payment) and mark as active.
+     */
+    public function submitOrder(Request $request, Order $order)
+    {
+        $user = $request->user();
+        if ($order->user_id !== $user->id || $order->status !== 'draft') {
+            abort(403);
+        }
+        // Here you would handle payment logic (integration with payment gateway)
+        // For now, we just mark as active
+        $order->update(['status' => 'active']);
+        return response()->json(['order' => $order]);
+    }
 }
