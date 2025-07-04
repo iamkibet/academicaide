@@ -10,7 +10,7 @@ export function NavMain({ items = [] }: { items: NavItem[] }) {
             <SidebarGroupLabel>Platform</SidebarGroupLabel>
             <SidebarMenu>
                 {items.map((item) => (
-                    <SidebarMenuItem key={item.title}>
+                    <SidebarMenuItem key={item.href || item.title}>
                         <SidebarMenuButton asChild isActive={item.href === page.url} tooltip={{ children: item.title }}>
                             <Link href={item.href} prefetch>
                                 {item.icon && typeof item.icon === 'string' ? (

@@ -14,7 +14,7 @@ class OrderController extends Controller
     {
         $filters = $request->only(['status', 'search', 'date_range']);
 
-        $orders = Order::with(['user', 'subjectCategory', 'academicLevel'])
+        $orders = Order::with(['client', 'subjectCategory', 'academicLevel'])
             ->when($filters['status'] ?? null, function ($query, $status) {
                 $query->where('status', $status);
             })
@@ -22,7 +22,7 @@ class OrderController extends Controller
                 $query->where(function ($query) use ($search) {
                     $query->where('title', 'like', "%{$search}%")
                         ->orWhere('id', 'like', "%{$search}%")
-                        ->orWhereHas('user', function ($query) use ($search) {
+                        ->orWhereHas('client', function ($query) use ($search) {
                             $query->where('name', 'like', "%{$search}%")
                                 ->orWhere('email', 'like', "%{$search}%");
                         });
@@ -47,10 +47,10 @@ class OrderController extends Controller
     public function show(Order $order)
     {
         $order->load([
-            'user',
+            'client',
             'subjectCategory',
             'academicLevel',
-            'addons',
+            'selectedAddons',
             'files',
             'messages.sender',
             'messages.attachments',

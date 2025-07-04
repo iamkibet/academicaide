@@ -1,36 +1,37 @@
-import { Badge } from '@/Components/ui/badge';
-import { Button } from '@/Components/ui/button';
-import { Card } from '@/Components/ui/card';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/Components/ui/tabs';
-import AdminLayout from '@/Layouts/AdminLayout';
-import { User } from '@/types';
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+import { Card } from '@/components/ui/card';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import AppLayout from '@/layouts/app-layout';
 import { Head } from '@inertiajs/react';
 
 interface Order {
     id: number;
-    user: {
+    client: {
         name: string;
         email: string;
     };
     assignment_type: string;
-    academic_level: string;
+    academic_level: string | Record<string, unknown>;
     pages: number;
     deadline: string;
     status: string;
-    total_price: number;
+    total_price: number | string;
     created_at: string;
     instructions: string;
     subject: string;
-    topic: string;
-    format: string;
-    references: number;
-    addons: {
+    topic?: string;
+    format?: string;
+    references?: number;
+    selectedAddons?: {
+        id: number;
         name: string;
         price: number;
     }[];
-    attachments: {
+    files?: {
+        id: number;
         name: string;
-        url: string;
+        path: string;
         type: string;
     }[];
     messages: {
@@ -45,7 +46,6 @@ interface Order {
 }
 
 interface Props {
-    auth: { user: User };
     order: Order;
 }
 
@@ -56,9 +56,9 @@ const statusColors = {
     cancelled: 'bg-red-100 text-red-800',
 };
 
-export default function OrderShow({ auth, order }: Props) {
+export default function OrderShow({ order }: Props) {
     return (
-        <AdminLayout user={auth.user}>
+        <AppLayout>
             <Head title={`Order #${order.id}`} />
 
             <div className="space-y-6">
@@ -87,7 +87,7 @@ export default function OrderShow({ auth, order }: Props) {
                                 </div>
                                 <div>
                                     <p className="text-sm font-medium text-gray-500">Total Price</p>
-                                    <p className="text-lg font-semibold">${order.total_price.toFixed(2)}</p>
+                                    <p className="text-lg font-semibold">${Number(order.total_price).toFixed(2)}</p>
                                 </div>
                                 <div>
                                     <p className="text-sm font-medium text-gray-500">Assignment Type</p>
@@ -95,7 +95,16 @@ export default function OrderShow({ auth, order }: Props) {
                                 </div>
                                 <div>
                                     <p className="text-sm font-medium text-gray-500">Academic Level</p>
-                                    <p>{order.academic_level}</p>
+                                    <p>
+                                        {typeof order.academic_level === 'object' && order.academic_level !== null
+                                            ? String(
+                                                  (order.academic_level as Record<string, unknown>).name ||
+                                                      (order.academic_level as Record<string, unknown>).label ||
+                                                      (order.academic_level as Record<string, unknown>).slug ||
+                                                      '',
+                                              )
+                                            : String(order.academic_level)}
+                                    </p>
                                 </div>
                                 <div>
                                     <p className="text-sm font-medium text-gray-500">Pages</p>
@@ -109,18 +118,24 @@ export default function OrderShow({ auth, order }: Props) {
                                     <p className="text-sm font-medium text-gray-500">Subject</p>
                                     <p>{order.subject}</p>
                                 </div>
-                                <div>
-                                    <p className="text-sm font-medium text-gray-500">Topic</p>
-                                    <p>{order.topic}</p>
-                                </div>
-                                <div>
-                                    <p className="text-sm font-medium text-gray-500">Format</p>
-                                    <p>{order.format}</p>
-                                </div>
-                                <div>
-                                    <p className="text-sm font-medium text-gray-500">References</p>
-                                    <p>{order.references}</p>
-                                </div>
+                                {order.topic && (
+                                    <div>
+                                        <p className="text-sm font-medium text-gray-500">Topic</p>
+                                        <p>{order.topic}</p>
+                                    </div>
+                                )}
+                                {order.format && (
+                                    <div>
+                                        <p className="text-sm font-medium text-gray-500">Format</p>
+                                        <p>{order.format}</p>
+                                    </div>
+                                )}
+                                {order.references !== undefined && (
+                                    <div>
+                                        <p className="text-sm font-medium text-gray-500">References</p>
+                                        <p>{order.references}</p>
+                                    </div>
+                                )}
                             </div>
                         </Card>
 
@@ -129,28 +144,30 @@ export default function OrderShow({ auth, order }: Props) {
                             <p className="mt-4 whitespace-pre-wrap text-gray-600">{order.instructions}</p>
                         </Card>
 
-                        <Card className="p-6">
-                            <h2 className="text-lg font-medium text-gray-900">Attachments</h2>
-                            <div className="mt-4 space-y-2">
-                                {order.attachments.map((attachment) => (
-                                    <div key={attachment.name} className="flex items-center justify-between rounded-lg border p-4">
-                                        <div className="flex items-center space-x-4">
-                                            <div className="text-blue-600">
-                                                {/* File icon based on type */}
-                                                {attachment.type === 'pdf' ? '📄' : '📎'}
+                        {order.files && (
+                            <Card className="p-6">
+                                <h2 className="text-lg font-medium text-gray-900">Attachments</h2>
+                                <div className="mt-4 space-y-2">
+                                    {order.files.map((file) => (
+                                        <div key={file.id} className="flex items-center justify-between rounded-lg border p-4">
+                                            <div className="flex items-center space-x-4">
+                                                <div className="text-blue-600">
+                                                    {/* File icon based on type */}
+                                                    {file.type === 'pdf' ? '📄' : '📎'}
+                                                </div>
+                                                <div>
+                                                    <p className="font-medium">{file.name}</p>
+                                                    <p className="text-sm text-gray-500">{file.type?.toUpperCase()}</p>
+                                                </div>
                                             </div>
-                                            <div>
-                                                <p className="font-medium">{attachment.name}</p>
-                                                <p className="text-sm text-gray-500">{attachment.type.toUpperCase()}</p>
-                                            </div>
+                                            <a href={file.path} download className="text-blue-600 hover:text-blue-900">
+                                                Download
+                                            </a>
                                         </div>
-                                        <a href={attachment.url} download className="text-blue-600 hover:text-blue-900">
-                                            Download
-                                        </a>
-                                    </div>
-                                ))}
-                            </div>
-                        </Card>
+                                    ))}
+                                </div>
+                            </Card>
+                        )}
                     </div>
 
                     {/* Sidebar */}
@@ -160,11 +177,11 @@ export default function OrderShow({ auth, order }: Props) {
                             <div className="mt-4 space-y-4">
                                 <div>
                                     <p className="text-sm font-medium text-gray-500">Name</p>
-                                    <p>{order.user.name}</p>
+                                    <p>{order.client?.name}</p>
                                 </div>
                                 <div>
                                     <p className="text-sm font-medium text-gray-500">Email</p>
-                                    <p>{order.user.email}</p>
+                                    <p>{order.client?.email}</p>
                                 </div>
                                 <Button variant="outline" className="w-full">
                                     Contact Client
@@ -172,17 +189,19 @@ export default function OrderShow({ auth, order }: Props) {
                             </div>
                         </Card>
 
-                        <Card className="p-6">
-                            <h2 className="text-lg font-medium text-gray-900">Add-ons</h2>
-                            <div className="mt-4 space-y-2">
-                                {order.addons.map((addon) => (
-                                    <div key={addon.name} className="flex items-center justify-between rounded-lg border p-3">
-                                        <span>{addon.name}</span>
-                                        <span className="font-medium">${addon.price.toFixed(2)}</span>
-                                    </div>
-                                ))}
-                            </div>
-                        </Card>
+                        {order.selectedAddons && (
+                            <Card className="p-6">
+                                <h2 className="text-lg font-medium text-gray-900">Add-ons</h2>
+                                <div className="mt-4 space-y-2">
+                                    {order.selectedAddons.map((addon) => (
+                                        <div key={addon.id} className="flex items-center justify-between rounded-lg border p-3">
+                                            <span>{addon.name}</span>
+                                            <span className="font-medium">${Number(addon.price).toFixed(2)}</span>
+                                        </div>
+                                    ))}
+                                </div>
+                            </Card>
+                        )}
                     </div>
                 </div>
 
@@ -220,6 +239,6 @@ export default function OrderShow({ auth, order }: Props) {
                     </Tabs>
                 </Card>
             </div>
-        </AdminLayout>
+        </AppLayout>
     );
 }

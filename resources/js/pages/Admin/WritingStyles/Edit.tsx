@@ -1,38 +1,44 @@
 import AppLayout from '@/layouts/app-layout';
 import { Head, Link, useForm } from '@inertiajs/react';
 
-interface AssignmentType {
+interface WritingStyle {
     id: number;
     name: string;
     label: string;
-    popular: boolean;
+    description?: string;
+    is_active: boolean;
+    display_order: number;
 }
 
 interface Props {
-    assignmentType: AssignmentType;
+    writingStyle: WritingStyle;
 }
 
-export default function Edit({ assignmentType }: Props) {
+export default function Edit({ writingStyle }: Props) {
     const { data, setData, patch, processing, errors } = useForm<{
         name: string;
         label: string;
-        popular: boolean;
+        description: string;
+        is_active: boolean;
+        display_order: number;
     }>({
-        name: assignmentType.name,
-        label: assignmentType.label,
-        popular: assignmentType.popular,
+        name: writingStyle.name,
+        label: writingStyle.label,
+        description: writingStyle.description || '',
+        is_active: writingStyle.is_active,
+        display_order: writingStyle.display_order,
     });
 
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
-        patch(route('admin.assignment-types.update', assignmentType.id));
+        patch(route('admin.writing-styles.update', writingStyle.id));
     };
 
     return (
         <AppLayout>
             <div className="mx-auto max-w-lg py-8">
-                <Head title="Edit Assignment Type" />
-                <h1 className="mb-6 text-2xl font-bold">Edit Assignment Type</h1>
+                <Head title="Edit Writing Style" />
+                <h1 className="mb-6 text-2xl font-bold">Edit Writing Style</h1>
                 <form onSubmit={handleSubmit} className="space-y-6 rounded bg-white p-6 shadow">
                     <div>
                         <label className="block text-sm font-medium text-gray-700">Name</label>
@@ -54,17 +60,36 @@ export default function Edit({ assignmentType }: Props) {
                         />
                         {errors.label && <div className="mt-1 text-sm text-red-600">{errors.label}</div>}
                     </div>
+                    <div>
+                        <label className="block text-sm font-medium text-gray-700">Description</label>
+                        <textarea
+                            className="mt-1 block w-full rounded border-gray-300 shadow-sm"
+                            value={data.description}
+                            onChange={(e) => setData('description', e.target.value)}
+                        />
+                        {errors.description && <div className="mt-1 text-sm text-red-600">{errors.description}</div>}
+                    </div>
                     <div className="flex items-center">
                         <input
-                            id="popular"
+                            id="is_active"
                             type="checkbox"
-                            checked={data.popular}
-                            onChange={(e) => setData('popular', Boolean(e.target.checked))}
+                            checked={data.is_active}
+                            onChange={(e) => setData('is_active', Boolean(e.target.checked))}
                             className="h-4 w-4 rounded border-gray-300 text-blue-600"
                         />
-                        <label htmlFor="popular" className="ml-2 block text-sm text-gray-700">
-                            Popular
+                        <label htmlFor="is_active" className="ml-2 block text-sm text-gray-700">
+                            Active
                         </label>
+                    </div>
+                    <div>
+                        <label className="block text-sm font-medium text-gray-700">Display Order</label>
+                        <input
+                            type="number"
+                            className="mt-1 block w-full rounded border-gray-300 shadow-sm"
+                            value={data.display_order}
+                            onChange={(e) => setData('display_order', Number(e.target.value))}
+                        />
+                        {errors.display_order && <div className="mt-1 text-sm text-red-600">{errors.display_order}</div>}
                     </div>
                     <div className="flex gap-2">
                         <button
@@ -75,7 +100,7 @@ export default function Edit({ assignmentType }: Props) {
                             Update
                         </button>
                         <Link
-                            href={route('admin.assignment-types.index')}
+                            href={route('admin.writing-styles.index')}
                             className="rounded border border-gray-300 px-4 py-2 text-gray-700 hover:bg-gray-100"
                         >
                             Back

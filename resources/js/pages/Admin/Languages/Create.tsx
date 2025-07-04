@@ -1,38 +1,27 @@
 import AppLayout from '@/layouts/app-layout';
 import { Head, Link, useForm } from '@inertiajs/react';
 
-interface AssignmentType {
-    id: number;
-    name: string;
-    label: string;
-    popular: boolean;
-}
-
-interface Props {
-    assignmentType: AssignmentType;
-}
-
-export default function Edit({ assignmentType }: Props) {
-    const { data, setData, patch, processing, errors } = useForm<{
+export default function Create() {
+    const { data, setData, post, processing, errors } = useForm<{
         name: string;
-        label: string;
-        popular: boolean;
+        code: string;
+        flag: string;
     }>({
-        name: assignmentType.name,
-        label: assignmentType.label,
-        popular: assignmentType.popular,
+        name: '',
+        code: '',
+        flag: '',
     });
 
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
-        patch(route('admin.assignment-types.update', assignmentType.id));
+        post(route('admin.languages.store'));
     };
 
     return (
         <AppLayout>
             <div className="mx-auto max-w-lg py-8">
-                <Head title="Edit Assignment Type" />
-                <h1 className="mb-6 text-2xl font-bold">Edit Assignment Type</h1>
+                <Head title="Add Language" />
+                <h1 className="mb-6 text-2xl font-bold">Add Language</h1>
                 <form onSubmit={handleSubmit} className="space-y-6 rounded bg-white p-6 shadow">
                     <div>
                         <label className="block text-sm font-medium text-gray-700">Name</label>
@@ -45,26 +34,25 @@ export default function Edit({ assignmentType }: Props) {
                         {errors.name && <div className="mt-1 text-sm text-red-600">{errors.name}</div>}
                     </div>
                     <div>
-                        <label className="block text-sm font-medium text-gray-700">Label</label>
+                        <label className="block text-sm font-medium text-gray-700">Code</label>
                         <input
                             type="text"
                             className="mt-1 block w-full rounded border-gray-300 shadow-sm"
-                            value={data.label}
-                            onChange={(e) => setData('label', e.target.value)}
+                            value={data.code}
+                            onChange={(e) => setData('code', e.target.value)}
                         />
-                        {errors.label && <div className="mt-1 text-sm text-red-600">{errors.label}</div>}
+                        {errors.code && <div className="mt-1 text-sm text-red-600">{errors.code}</div>}
                     </div>
-                    <div className="flex items-center">
+                    <div>
+                        <label className="block text-sm font-medium text-gray-700">Flag (Emoji)</label>
                         <input
-                            id="popular"
-                            type="checkbox"
-                            checked={data.popular}
-                            onChange={(e) => setData('popular', Boolean(e.target.checked))}
-                            className="h-4 w-4 rounded border-gray-300 text-blue-600"
+                            type="text"
+                            className="mt-1 block w-full rounded border-gray-300 shadow-sm"
+                            value={data.flag}
+                            onChange={(e) => setData('flag', e.target.value)}
+                            placeholder="🇺🇸"
                         />
-                        <label htmlFor="popular" className="ml-2 block text-sm text-gray-700">
-                            Popular
-                        </label>
+                        {errors.flag && <div className="mt-1 text-sm text-red-600">{errors.flag}</div>}
                     </div>
                     <div className="flex gap-2">
                         <button
@@ -72,10 +60,10 @@ export default function Edit({ assignmentType }: Props) {
                             disabled={processing}
                             className="rounded bg-blue-600 px-4 py-2 text-white hover:bg-blue-700 disabled:opacity-50"
                         >
-                            Update
+                            Save
                         </button>
                         <Link
-                            href={route('admin.assignment-types.index')}
+                            href={route('admin.languages.index')}
                             className="rounded border border-gray-300 px-4 py-2 text-gray-700 hover:bg-gray-100"
                         >
                             Back

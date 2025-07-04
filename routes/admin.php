@@ -8,8 +8,10 @@ use App\Http\Controllers\Admin\AcademicLevelController;
 use App\Http\Controllers\Admin\DeadlineController;
 use App\Http\Controllers\Admin\AddonController;
 use App\Http\Controllers\Admin\AssignmentTypeController;
+use App\Http\Controllers\Admin\LanguageController;
 use App\Http\Controllers\Admin\ServiceTypeController;
 use App\Http\Controllers\Admin\LineSpacingController;
+use App\Models\Language;
 use Illuminate\Support\Facades\Route;
 
 Route::middleware(['web', 'auth', 'verified', 'role:A'])->prefix('admin')->name('admin.')->group(function () {
@@ -66,4 +68,7 @@ Route::middleware(['web', 'auth', 'verified', 'role:A'])->prefix('admin')->name(
     Route::resource('assignment-types', AssignmentTypeController::class)->except(['show']);
     Route::resource('service-types', ServiceTypeController::class)->except(['show']);
     Route::resource('line-spacings', LineSpacingController::class)->only(['index', 'store', 'update', 'destroy']);
+    Route::resource('languages', LanguageController::class);
+    Route::resource('writing-styles', \App\Http\Controllers\Admin\WritingStyleController::class);
+    Route::resource('pricing-configs', \App\Http\Controllers\Admin\PricingConfigController::class);
 });
