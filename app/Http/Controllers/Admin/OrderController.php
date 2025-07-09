@@ -144,4 +144,18 @@ class OrderController extends Controller
 
         return back()->with('success', 'Order rejected successfully.');
     }
+
+    public function updateStatus(Order $order, Request $request)
+    {
+        $this->authorize('update', $order); // Ensure only admins can update
+
+        $validated = $request->validate([
+            'status' => 'required|in:draft,active,completed,cancelled,pending,revision',
+        ]);
+
+        $order->status = $validated['status'];
+        $order->save();
+
+        return redirect()->back()->with('success', 'Order status updated successfully.');
+    }
 }

@@ -38,7 +38,6 @@ class DashboardController extends Controller
             'metrics' => $stats,
             'recent_orders' => OrderResource::collection($recent_orders)->toArray(request()),
             'orderTrends' => $orderTrends,
-            'user' => request()->user(),
         ]);
     }
 }

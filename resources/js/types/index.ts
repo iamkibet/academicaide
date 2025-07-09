@@ -1,3 +1,4 @@
+import { LucideIcon } from 'lucide-react';
 import { Config } from 'ziggy-js';
 
 export interface User {
@@ -8,6 +9,7 @@ export interface User {
     email_verified_at?: string;
     created_at: string;
     updated_at: string;
+    avatar: string;
 }
 
 export interface Auth {
@@ -27,5 +29,12 @@ export interface SharedData {
 export interface PageProps {
     auth: Auth;
     errors: Record<string, string>;
-    [key: string]: any;
+    [key: string]: unknown;
+}
+
+export interface NavItem {
+    title: string;
+    href: string;
+    icon?: LucideIcon | string | null;
+    isActive?: boolean;
 }

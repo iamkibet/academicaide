@@ -1,11 +1,12 @@
 import { NavFooter } from '@/components/nav-footer';
 import { NavMain } from '@/components/nav-main';
-import { NavUser } from '@/components/nav-user';
 import { Sidebar, SidebarContent, SidebarFooter, SidebarHeader, SidebarMenu, SidebarMenuButton, SidebarMenuItem } from '@/components/ui/sidebar';
-import { type NavItem } from '@/types';
-import { Link } from '@inertiajs/react';
-import { BookOpen, Folder, LayoutGrid } from 'lucide-react';
+import type { NavItem } from '@/types';
+import { User } from '@/types';
+import { Link, usePage } from '@inertiajs/react';
+import { Folder, LayoutGrid, LogOut, User as UserIcon } from 'lucide-react';
 import AppLogo from './app-logo';
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from './ui/dropdown-menu';
 
 const mainNavItems: NavItem[] = [
     {
@@ -13,11 +14,7 @@ const mainNavItems: NavItem[] = [
         href: '/dashboard',
         icon: LayoutGrid,
     },
-    {
-        title: 'Dashboard',
-        href: '/admin/dashboard',
-        icon: 'M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6',
-    },
+
     {
         title: 'Orders',
         href: '/admin/orders',
@@ -75,14 +72,15 @@ const footerNavItems: NavItem[] = [
         href: 'https://github.com/laravel/react-starter-kit',
         icon: Folder,
     },
-    {
-        title: 'Documentation',
-        href: 'https://laravel.com/docs/starter-kits#react',
-        icon: BookOpen,
-    },
 ];
 
 export function AppSidebar() {
+    const { props } = usePage<{ auth?: { user?: User } }>();
+    const user = props.auth?.user;
+
+    if (!user) {
+        console.warn('No user found in page props. NavUser will not be rendered.');
+    }
     return (
         <Sidebar collapsible="icon" variant="inset">
             <SidebarHeader>
@@ -103,7 +101,22 @@ export function AppSidebar() {
 
             <SidebarFooter>
                 <NavFooter items={footerNavItems} className="mt-auto" />
-                <NavUser />
+                <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                        <button className="hover:bg-muted/50 flex items-center gap-2 rounded p-2 transition-colors">
+                            <UserIcon className="size-4" />
+                            <span>Account</span>
+                        </button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent align="end">
+                        <DropdownMenuItem asChild>
+                            <Link href="/logout" method="post" as="button" className="flex w-full items-center gap-2 text-red-600">
+                                <LogOut className="size-4" />
+                                Logout
+                            </Link>
+                        </DropdownMenuItem>
+                    </DropdownMenuContent>
+                </DropdownMenu>
             </SidebarFooter>
         </Sidebar>
     );

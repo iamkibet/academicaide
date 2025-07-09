@@ -13,6 +13,8 @@ return new class extends Migration
             $table->string('name')->unique();
             $table->string('label');
             $table->boolean('popular')->default(false);
+            $table->string('inc_type')->default('amount'); // 'amount' or 'percent'
+            $table->decimal('amount', 8, 2)->default(0);
             $table->timestamps();
         });
     }

@@ -177,9 +177,12 @@ export default function Dashboard({ metrics, recent_orders, orderTrends }: Props
                             <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
                                 <CalendarIcon className="h-5 w-5 text-gray-400" />
                             </div>
-                            <select className="block w-full rounded-lg border border-gray-200 bg-white py-2 pr-8 pl-10 text-sm shadow-sm focus:border-blue-500 focus:ring-2 focus:ring-blue-500">
+                            <select
+                                className="block w-full rounded-lg border border-gray-200 bg-white py-2 pr-8 pl-10 text-sm shadow-sm focus:border-blue-500 focus:ring-2 focus:ring-blue-500"
+                                defaultValue="Last 30 days"
+                            >
                                 <option>Last 7 days</option>
-                                <option selected>Last 30 days</option>
+                                <option>Last 30 days</option>
                                 <option>Last 90 days</option>
                             </select>
                         </div>
@@ -218,7 +221,7 @@ export default function Dashboard({ metrics, recent_orders, orderTrends }: Props
                     />
                     <MetricCard
                         title="Total Revenue"
-                        value={`$${metrics.total_revenue.toFixed(2)}`}
+                        value={`$${Number(metrics.total_revenue || 0).toFixed(2)}`}
                         trend={18.2}
                         icon={<CurrencyDollarIcon className="h-6 w-6" />}
                         color="purple"
@@ -380,7 +383,7 @@ export default function Dashboard({ metrics, recent_orders, orderTrends }: Props
                                                 <StatusBadge status={order.status} />
                                             </td>
                                             <td className="px-4 py-3 text-sm font-medium whitespace-nowrap text-gray-900">
-                                                ${order.total_price.toFixed(2)}
+                                                ${Number(order.total_price || 0).toFixed(2)}
                                             </td>
                                             <td className="px-4 py-3 text-sm whitespace-nowrap text-gray-500">{formatDate(order.created_at)}</td>
                                             <td className="px-4 py-3 text-sm whitespace-nowrap text-gray-500">

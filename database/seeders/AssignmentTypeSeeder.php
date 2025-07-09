@@ -10,23 +10,16 @@ class AssignmentTypeSeeder extends Seeder
     public function run(): void
     {
         DB::table('assignment_types')->insert([
-            ['name' => 'essay', 'label' => 'Essay (any type)', 'popular' => true],
-            ['name' => 'research_paper', 'label' => 'Research paper', 'popular' => true],
-            ['name' => 'discussion_post', 'label' => 'Discussion post', 'popular' => true],
-            ['name' => 'powerpoint', 'label' => 'PowerPoint PPT', 'popular' => true],
-            ['name' => 'case_study', 'label' => 'Case study', 'popular' => true],
-            ['name' => 'assignment', 'label' => 'Assignment', 'popular' => false],
-            ['name' => 'admission_essay', 'label' => 'Admission essay', 'popular' => false],
-            ['name' => 'analysis', 'label' => 'Analysis (any type)', 'popular' => false],
-            ['name' => 'annotated_bibliography', 'label' => 'Annotated bibliography', 'popular' => false],
-            ['name' => 'article_review', 'label' => 'Article review', 'popular' => false],
-            ['name' => 'article_writing', 'label' => 'Article writing', 'popular' => false],
-            ['name' => 'book_review', 'label' => 'Book/Movie review', 'popular' => false],
-            ['name' => 'business_plan', 'label' => 'Business plan', 'popular' => false],
-            ['name' => 'business_proposal', 'label' => 'Business proposal', 'popular' => false],
-            ['name' => 'coursework', 'label' => 'Coursework', 'popular' => false],
-            ['name' => 'capstone', 'label' => 'Capstone project', 'popular' => false],
-            ['name' => 'creative_writing', 'label' => 'Creative writing', 'popular' => false],
+            ['id' => 101, 'name' => 'unspecified', 'label' => 'Unspecified', 'popular' => false, 'inc_type' => 'amount', 'amount' => 0],
+            ['id' => 100, 'name' => 'web_design', 'label' => 'Web Design', 'popular' => false, 'inc_type' => '', 'amount' => 0],
+            ['id' => 98, 'name' => 'architectural_design', 'label' => 'Architectural Design', 'popular' => false, 'inc_type' => '', 'amount' => 0],
+            ['id' => 97, 'name' => 'tourism', 'label' => 'Tourism', 'popular' => false, 'inc_type' => 'percent', 'amount' => 0],
+            ['id' => 96, 'name' => 'web_design_percent', 'label' => 'Web Design', 'popular' => false, 'inc_type' => 'percent', 'amount' => 50],
+            ['id' => 95, 'name' => 'it_management', 'label' => 'IT management', 'popular' => false, 'inc_type' => 'percent', 'amount' => 50],
+            ['id' => 94, 'name' => 'internet', 'label' => 'Internet', 'popular' => false, 'inc_type' => 'percent', 'amount' => 50],
+            ['id' => 93, 'name' => 'computer_science', 'label' => 'Computer Science', 'popular' => false, 'inc_type' => 'percent', 'amount' => 0],
+            ['id' => 92, 'name' => 'aviation', 'label' => 'Aviation', 'popular' => false, 'inc_type' => 'percent', 'amount' => 50],
+            ['id' => 91, 'name' => 'aeronautics', 'label' => 'Aeronautics', 'popular' => false, 'inc_type' => 'percent', 'amount' => 0],
         ]);
     }
 }

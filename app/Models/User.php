@@ -24,6 +24,7 @@ class User extends Authenticatable
         'email',
         'password',
         'role',
+        'avatar',
         'default_payment_method_id',
         'two_factor_enabled',
     ];

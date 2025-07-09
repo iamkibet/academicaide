@@ -180,7 +180,7 @@ export default function OrdersIndex({ orders, filters }: Props) {
                                                 </span>
                                             </td>
                                             <td className="px-6 py-4 text-sm whitespace-nowrap text-gray-700">
-                                                ${Number(order.total_price).toFixed(2)}
+                                                ${Number(order.total_price || 0).toFixed(2)}
                                             </td>
                                             <td className="px-6 py-4 text-sm whitespace-nowrap text-gray-500">
                                                 {new Date(order.created_at).toLocaleDateString()}

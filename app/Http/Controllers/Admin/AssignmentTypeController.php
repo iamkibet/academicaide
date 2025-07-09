@@ -25,9 +25,11 @@ class AssignmentTypeController extends Controller
     public function store(Request $request)
     {
         $validated = $request->validate([
-            'name' => 'required|string|unique:assignment_types',
+            'name' => 'required|string|unique:assignment_types,name' . ($request->route('assignmentType') ? ',' . $request->route('assignmentType')->id : ''),
             'label' => 'required|string',
             'popular' => 'boolean',
+            'inc_type' => 'required|string|in:amount,percent',
+            'amount' => 'required|numeric|min:0',
         ]);
         AssignmentType::create($validated);
         return redirect()->route('admin.assignment-types.index')->with('success', 'Assignment type created.');
@@ -46,6 +48,8 @@ class AssignmentTypeController extends Controller
             'name' => 'required|string|unique:assignment_types,name,' . $assignmentType->id,
             'label' => 'required|string',
             'popular' => 'boolean',
+            'inc_type' => 'required|string|in:amount,percent',
+            'amount' => 'required|numeric|min:0',
         ]);
         $assignmentType->update($validated);
         return redirect()->route('admin.assignment-types.index')->with('success', 'Assignment type updated.');

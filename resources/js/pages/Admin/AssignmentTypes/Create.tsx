@@ -6,10 +6,14 @@ export default function Create() {
         name: string;
         label: string;
         popular: boolean;
+        inc_type: string;
+        amount: number;
     }>({
         name: '',
         label: '',
         popular: false,
+        inc_type: 'amount',
+        amount: 0,
     });
 
     const handleSubmit = (e: React.FormEvent) => {
@@ -54,6 +58,28 @@ export default function Create() {
                         <label htmlFor="popular" className="ml-2 block text-sm text-gray-700">
                             Popular
                         </label>
+                    </div>
+                    <div>
+                        <label className="block text-sm font-medium text-gray-700">Increment Type</label>
+                        <select
+                            className="mt-1 block w-full rounded border-gray-300 shadow-sm"
+                            value={data.inc_type}
+                            onChange={(e) => setData('inc_type', e.target.value)}
+                        >
+                            <option value="amount">Amount</option>
+                            <option value="percent">Percent</option>
+                        </select>
+                        {errors.inc_type && <div className="mt-1 text-sm text-red-600">{errors.inc_type}</div>}
+                    </div>
+                    <div>
+                        <label className="block text-sm font-medium text-gray-700">Amount</label>
+                        <input
+                            type="number"
+                            className="mt-1 block w-full rounded border-gray-300 shadow-sm"
+                            value={data.amount}
+                            onChange={(e) => setData('amount', Number(e.target.value))}
+                        />
+                        {errors.amount && <div className="mt-1 text-sm text-red-600">{errors.amount}</div>}
                     </div>
                     <div className="flex gap-2">
                         <button

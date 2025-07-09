@@ -6,6 +6,8 @@ interface AssignmentType {
     name: string;
     label: string;
     popular: boolean;
+    inc_type?: string;
+    amount?: number;
 }
 
 interface Props {
@@ -40,6 +42,8 @@ export default function Index({ assignmentTypes, success, error }: Props) {
                                 <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">Name</th>
                                 <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">Label</th>
                                 <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">Popular</th>
+                                <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">Inc. Type</th>
+                                <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">Amount</th>
                                 <th className="px-4 py-2"></th>
                             </tr>
                         </thead>
@@ -49,6 +53,8 @@ export default function Index({ assignmentTypes, success, error }: Props) {
                                     <td className="px-4 py-2 font-mono">{type.name}</td>
                                     <td className="px-4 py-2">{type.label}</td>
                                     <td className="px-4 py-2">{type.popular ? 'Yes' : 'No'}</td>
+                                    <td className="px-4 py-2">{type.inc_type || '-'}</td>
+                                    <td className="px-4 py-2">{typeof type.amount === 'number' ? type.amount : '-'}</td>
                                     <td className="flex gap-2 px-4 py-2">
                                         <Link href={route('admin.assignment-types.edit', type.id)} className="text-blue-600 hover:underline">
                                             Edit
@@ -61,7 +67,7 @@ export default function Index({ assignmentTypes, success, error }: Props) {
                             ))}
                             {assignmentTypes.length === 0 && (
                                 <tr>
-                                    <td colSpan={4} className="py-4 text-center text-gray-400">
+                                    <td colSpan={6} className="py-4 text-center text-gray-400">
                                         No assignment types found.
                                     </td>
                                 </tr>

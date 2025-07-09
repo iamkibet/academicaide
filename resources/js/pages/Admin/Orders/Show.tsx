@@ -3,7 +3,7 @@ import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import AppLayout from '@/layouts/app-layout';
-import { Head } from '@inertiajs/react';
+import { Head, useForm } from '@inertiajs/react';
 
 interface Order {
     id: number;
@@ -57,6 +57,25 @@ const statusColors = {
 };
 
 export default function OrderShow({ order }: Props) {
+    const statusOptions = [
+        { value: 'draft', label: 'Draft' },
+        { value: 'active', label: 'Active' },
+        { value: 'completed', label: 'Completed' },
+        { value: 'cancelled', label: 'Cancelled' },
+        { value: 'pending', label: 'Pending' },
+        { value: 'revision', label: 'Revision' },
+    ];
+    const { data, setData, processing, patch } = useForm({
+        status: order.status,
+    });
+    const handleStatusUpdate = (e: React.FormEvent) => {
+        e.preventDefault();
+        patch(`/admin/orders/${order.id}/status`, {
+            preserveScroll: true,
+            onSuccess: () => {},
+        });
+    };
+
     return (
         <AppLayout>
             <Head title={`Order #${order.id}`} />
@@ -70,7 +89,23 @@ export default function OrderShow({ order }: Props) {
                     </div>
                     <div className="flex space-x-4">
                         <Button variant="outline">Download Files</Button>
-                        <Button>Update Status</Button>
+                        <form onSubmit={handleStatusUpdate} className="flex items-center gap-2">
+                            <select
+                                className="rounded border-gray-300 px-2 py-1 text-sm"
+                                value={data.status}
+                                onChange={(e) => setData('status', e.target.value)}
+                                disabled={processing}
+                            >
+                                {statusOptions.map((opt) => (
+                                    <option key={opt.value} value={opt.value}>
+                                        {opt.label}
+                                    </option>
+                                ))}
+                            </select>
+                            <Button type="submit" disabled={processing || data.status === order.status}>
+                                {processing ? 'Updating...' : 'Update Status'}
+                            </Button>
+                        </form>
                     </div>
                 </div>
 
