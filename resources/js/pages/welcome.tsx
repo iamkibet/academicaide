@@ -15,93 +15,108 @@ export default function Welcome() {
             </Head>
 
             {/* Hero Section */}
-            <section id="hero-section" className="relative mt-5 h-screen w-full overflow-hidden">
-                <div className="mx-auto flex h-full max-w-7xl flex-col">
-                    <div className="grid h-full items-center gap-8 py-12 md:grid-cols-2">
-                        {/* Left side */}
-                        <div className="space-y-6 px-4 md:px-0">
-                            <h1 className="text-4xl leading-tight font-bold text-gray-800 md:text-5xl">
-                                Unlock Your Academic Potential
-                                <br />
-                                <span>One Task at a Time</span>
-                            </h1>
-                            <p className="max-w-md text-xl text-gray-600">
-                                Our team of experts from across the World are ready to work on your papers and meet your academic needs. Our tutors
-                                are ready to work with you
-                            </p>
-                            <div className="flex w-full justify-around">
-                                <p className="rounded-lg bg-white px-3 py-2 shadow-md">
-                                    <strong>Simple</strong> ordering process
-                                </p>
-                                <p className="rounded-lg bg-white px-3 py-2 shadow-md">
-                                    <strong>Affordable</strong> services
-                                </p>
-                                <p className="rounded-lg bg-white px-3 py-2 shadow-md">
-                                    <strong>Quick</strong> delivery
-                                </p>
+            <section className="relative min-h-screen overflow-hidden bg-gradient-to-br from-slate-50 to-slate-100 px-2 pt-14 sm:px-0 sm:pt-20">
+                {/* Background elements */}
+                <div className="absolute top-0 right-0 left-0 h-32 bg-gradient-to-b from-slate-900/5 to-transparent sm:h-64"></div>
+                <div className="absolute top-1/4 right-1/4 h-40 w-40 rounded-full bg-orange-500/10 blur-3xl sm:h-96 sm:w-96"></div>
+                <div className="absolute bottom-1/3 left-1/4 h-32 w-32 rounded-full bg-blue-500/10 blur-3xl sm:h-80 sm:w-80"></div>
+
+                <div className="relative z-10 mx-auto max-w-7xl sm:px-6 lg:px-8">
+                    <div className="grid min-h-0 min-w-0 grid-cols-1 items-start gap-6 md:grid-cols-2 lg:grid-cols-3">
+                        {/* Content */}
+                        <div className="col-span-2 flex flex-col justify-center px-2 text-center sm:px-0 lg:text-left">
+                            <div className="mb-4 inline-flex items-center rounded-full bg-slate-200/70 px-3 py-1 text-xs font-medium text-slate-700 sm:mb-6 sm:px-4 sm:text-sm">
+                                <span className="mr-2">🎓</span> Trusted by students worldwide
                             </div>
-                            <div className="flex justify-between py-4">
-                                {/* Company 1 */}
-                                <div className="flex items-center p-2">
-                                    <img
-                                        src="https://raw.githubusercontent.com/iamkibet/assets/main/logo-sitejabber-small.svg"
-                                        alt="Sitejabber Reviews"
-                                        className="mr-4 h-10"
-                                    />
-                                    <div className="text-left">
-                                        <p className="text-[12px] font-medium text-gray-800">sitejabber.com</p>
-                                        <div className="flex items-center">
-                                            <h1 className="mr-1 text-lg font-bold text-indigo-600">4.7</h1>
-                                            {/* Star SVG */}
-                                            <span className="text-yellow-400">★</span>
+
+                            <h1 className="xs:text-3xl mb-4 text-2xl leading-tight font-bold text-slate-900 sm:mb-6 sm:text-4xl md:text-5xl lg:text-6xl">
+                                <span className="block">Unlock Your</span>
+                                <span className="mt-2 block text-orange-600">Academic Potential</span>
+                            </h1>
+
+                            <p className="xs:max-w-md xs:text-base mx-auto mb-6 max-w-xs text-sm text-slate-600 sm:mb-8 sm:max-w-2xl sm:text-xl lg:mx-0">
+                                Expert academic assistance from PhD-qualified writers tailored to your needs
+                            </p>
+
+                            {/* Features */}
+                            <div className="mb-8 max-w-full overflow-x-auto sm:mb-10">
+                                <div className="flex max-w-xs min-w-[260px] grid-cols-3 items-start justify-start gap-2 sm:max-w-lg sm:min-w-0 sm:gap-4 lg:mx-0">
+                                    {[
+                                        { title: 'Simple', icon: '📝' },
+                                        { title: 'Affordable', icon: '💰' },
+                                        { title: 'Quick', icon: '⚡' },
+                                    ].map((feature, index) => (
+                                        <div key={index} className="flex items-center gap-1 sm:gap-2">
+                                            <div className="flex text-2xl sm:text-3xl">{feature.icon}</div>
+                                            <div className="text-xs font-bold text-slate-800 sm:text-base">{feature.title}</div>
                                         </div>
-                                    </div>
+                                    ))}
                                 </div>
-                                {/* Company 2 */}
-                                <div className="flex items-center p-2">
-                                    <img
-                                        src="https://raw.githubusercontent.com/iamkibet/assets/refs/heads/main/logo_reviews.svg"
-                                        alt="Company 2 Reviews"
-                                        className="mr-4 h-10"
-                                    />
-                                    <div className="text-left">
-                                        <p className="text-[12px] font-medium text-gray-800">reviews.io</p>
-                                        <div className="flex items-center">
-                                            <h1 className="mr-1 text-lg font-bold text-indigo-600">4.5</h1>
-                                            <span className="text-yellow-400">★</span>
+                            </div>
+
+                            {/* Reviews */}
+                            <div className="mb-8 w-full max-w-full overflow-x-auto sm:mb-10">
+                                <div className="flex min-w-[420px] flex-row flex-nowrap justify-center gap-3 sm:min-w-0 sm:flex-row sm:flex-wrap sm:gap-4 lg:justify-start">
+                                    {[
+                                        { name: 'Sitejabber', rating: 4.7, logo: 'SJ', color: 'text-blue-600' },
+                                        { name: 'Reviews.io', rating: 4.5, logo: 'RI', color: 'text-green-600' },
+                                        { name: 'Google', rating: 4.8, logo: 'G', color: 'text-orange-600' },
+                                    ].map((review, index) => (
+                                        <div
+                                            key={index}
+                                            className="flex min-w-[120px] items-center rounded-lg bg-white px-3 py-2 shadow-sm sm:min-w-[140px] sm:px-4 sm:py-3"
+                                        >
+                                            <div
+                                                className={`flex h-8 w-8 items-center justify-center rounded-full font-bold sm:h-10 sm:w-10 ${review.color} mr-2 bg-slate-100 sm:mr-3`}
+                                            >
+                                                {review.logo}
+                                            </div>
+                                            <div>
+                                                <div className="text-xs font-medium text-slate-800 sm:text-sm">{review.name}</div>
+                                                <div className="flex items-center">
+                                                    <div className="mr-1 text-base font-bold sm:text-lg">{review.rating}</div>
+                                                    <div className="flex text-orange-400">
+                                                        {[...Array(5)].map((_, i) => (
+                                                            <svg key={i} className="h-3 w-3 fill-current sm:h-4 sm:w-4" viewBox="0 0 24 24">
+                                                                <path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z" />
+                                                            </svg>
+                                                        ))}
+                                                    </div>
+                                                </div>
+                                            </div>
                                         </div>
-                                    </div>
+                                    ))}
                                 </div>
-                                {/* Company 3 */}
-                                <div className="flex items-center p-2">
-                                    <img
-                                        src="https://raw.githubusercontent.com/iamkibet/assets/main/logo-sitejabber-small.svg"
-                                        className="mr-4 h-10"
-                                    />
-                                    <div className="text-left">
-                                        <p className="text-[12px] font-medium text-gray-800">google.com</p>
-                                        <div className="flex items-center">
-                                            <h1 className="mr-1 text-lg font-bold text-indigo-600">
-                                                4.<span>8</span>
-                                            </h1>
-                                            <span className="text-yellow-400">★</span>
-                                        </div>
-                                    </div>
-                                </div>
+                            </div>
+
+                            {/* CTA */}
+                            <div className="flex w-full flex-col justify-center gap-3 sm:flex-row sm:gap-4 lg:justify-start">
+                                <button className="w-full rounded-full bg-gradient-to-r from-orange-500 to-orange-600 px-6 py-3 font-bold text-white shadow-lg transition-all hover:from-orange-600 hover:to-orange-700 hover:shadow-xl sm:w-auto sm:px-8 sm:py-4">
+                                    Get Started
+                                </button>
+                                <button className="w-full rounded-full border-2 border-slate-300 bg-white px-6 py-3 font-bold text-slate-700 transition-all hover:border-orange-500 sm:w-auto sm:px-8 sm:py-4">
+                                    How It Works
+                                </button>
                             </div>
                         </div>
-                        {/* Right side: Calculator */}
-                        <div className="relative flex h-full items-center justify-center px-4 md:px-0">
-                            <div className="w-full max-w-md rounded-xl bg-white p-6 shadow-2xl">
-                                <GlobalCalculator />
-                            </div>
+
+                        {/* Calculator Card */}
+                        <div className="relative col-span-1 mt-8 w-full max-w-full px-2 sm:px-0 md:mt-0">
+                            <GlobalCalculator />
                         </div>
                     </div>
                 </div>
-                {/* Decorative elements */}
-                <div className="absolute bottom-0 left-0 h-16 w-full -skew-y-3 transform bg-indigo-600 opacity-10"></div>
-                <div className="animate-blob absolute top-0 right-0 h-24 w-24 rounded-full bg-yellow-300 opacity-70 mix-blend-multiply blur-xl filter"></div>
-                <div className="animate-blob animation-delay-2000 absolute bottom-0 left-10 h-24 w-24 rounded-full bg-pink-300 opacity-70 mix-blend-multiply blur-xl filter"></div>
+
+                {/* Bottom wave */}
+                <div className="absolute right-0 bottom-0 left-0">
+                    <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        viewBox="0 0 1440 120"
+                        className="xs:h-12 h-10 w-full fill-current text-slate-50 sm:h-20 md:h-28 lg:h-32"
+                    >
+                        <path d="M0,64L80,58.7C160,53,320,43,480,48C640,53,800,75,960,74.7C1120,75,1280,53,1360,42.7L1440,32L1440,120L1360,120C1280,120,1120,120,960,120C800,120,640,120,480,120C320,120,160,120,80,120L0,120Z"></path>
+                    </svg>
+                </div>
             </section>
 
             {/* Universities Section */}
@@ -433,13 +448,12 @@ export default function Welcome() {
                             </div>
                         ))}
                     </div>
-
-                    
                 </div>
             </section>
 
-  
-            <div className="my-8 text-center text-gray-400"><Accordion /></div>
+            <div className="my-8 text-center text-gray-400">
+                <Accordion />
+            </div>
 
             <AcademicExcellenceSection />
         </GuestLayout>

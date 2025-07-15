@@ -25,7 +25,7 @@ const GlobalCalculator = () => {
 
     return (
         <section className="relative">
-            <form onSubmit={handleSubmit} className="w-full max-w-md space-y-4 rounded-xl bg-white p-6 shadow-lg">
+            <form onSubmit={handleSubmit} className="w-full space-y-4 rounded-xl bg-white p-6 shadow-lg">
                 <h2 className="mb-4 text-2xl font-bold text-gray-800">Calculate Your Order</h2>
 
                 <div>
