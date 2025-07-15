@@ -1,3 +1,5 @@
+import AcademicExcellenceSection from '@/components/academic-excellence';
+import Accordion from '@/components/accordion';
 import GlobalCalculator from '@/components/global-calculator';
 import ServiceSteps from '@/components/our-services';
 import Samples from '@/components/samples';
@@ -253,7 +255,9 @@ export default function Welcome() {
                 <div className="mx-auto flex max-w-7xl gap-4 overflow-x-auto md:overflow-visible">
                     {/* Guarantee cards */}
                     <div className="flex min-w-[300px] flex-col items-start gap-4 p-3 md:min-w-0 md:flex-row md:items-center md:gap-6">
-                        <div className="flex-shrink-0 rounded-lg bg-white p-3 shadow-sm"><Search className='text-black'/></div>
+                        <div className="flex-shrink-0 rounded-lg bg-white p-3 shadow-sm">
+                            <Search className="text-black" />
+                        </div>
                         <div>
                             <h1 className="text-lg font-extrabold md:text-xl">Zero plagiarism</h1>
                             <p className="text-sm text-white/90 md:text-base">
@@ -262,14 +266,18 @@ export default function Welcome() {
                         </div>
                     </div>
                     <div className="flex min-w-[300px] flex-col items-start gap-4 p-3 md:min-w-0 md:flex-row md:items-center md:gap-6">
-                        <div className="flex-shrink-0 rounded-lg bg-white p-3 shadow-sm text-black"><Pen /></div>
+                        <div className="flex-shrink-0 rounded-lg bg-white p-3 text-black shadow-sm">
+                            <Pen />
+                        </div>
                         <div>
                             <h1 className="text-lg font-extrabold md:text-xl">Free revisions</h1>
                             <p className="text-sm text-white/90 md:text-base">We polish your essay for free if you don’t add any new guidelines.</p>
                         </div>
                     </div>
                     <div className="flex min-w-[300px] flex-col items-start gap-4 p-3 md:min-w-0 md:flex-row md:items-center md:gap-6">
-                        <div className="flex-shrink-0 rounded-lg bg-white p-3 shadow-sm text-black"><DollarSign /></div>
+                        <div className="flex-shrink-0 rounded-lg bg-white p-3 text-black shadow-sm">
+                            <DollarSign />
+                        </div>
                         <div>
                             <h1 className="text-lg font-extrabold md:text-xl">Money-back</h1>
                             <p className="text-sm text-white/90 md:text-base">
@@ -283,228 +291,157 @@ export default function Welcome() {
             {/* Samples Section */}
             <div className="bg-white/90 py-6">
                 {/* TODO: Replace with Samples component */}
-                <div className="text-center text-gray-400"><Samples /></div>
+                <div className="text-center text-gray-400">
+                    <Samples />
+                </div>
             </div>
 
             {/* Qualified Writers Section */}
-            <section className="bg-white py-8">
-                <div className="mx-auto mt-4 max-w-7xl">
-                    <div className="space-y-2">
-                        <h2 className="text-2xl leading-tight font-bold text-gray-900 sm:text-3xl lg:text-4xl">
-                            <span className="section-header">300+ Qualified Writers</span>
-                            <br />
-                            Framework
+            <section className="bg-gradient-to-br from-slate-50 to-slate-100 py-16">
+                <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+                    <div className="mb-16 text-center">
+                        <h2 className="text-4xl font-bold tracking-tight text-slate-900 sm:text-5xl">
+                            <span className="block">300+ Qualified Academic Writers</span>
+                            <span className="mt-2 block text-orange-600">Excellence Framework</span>
                         </h2>
+                        <div className="mx-auto mt-6 max-w-3xl">
+                            <p className="text-xl text-slate-600">
+                                Our carefully vetted writers follow strict quality standards to deliver exceptional academic work
+                            </p>
+                        </div>
                     </div>
-                    <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-4">
-                        {/* Feature grid - replace with icons as needed */}
+
+                    <div className="grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-4">
                         {[
-                            'Approx. 275 words/page',
-                            'All formats (APA, MLA, CHICAGO etc)',
-                            '12-point font (Arial or Times New Roman)',
-                            'Free bibliography page',
-                            'Progressive delivery',
-                            'Free title page for a written paper',
-                            'Academic integrity',
-                            'Plagiarism free papers',
-                        ].map((text, idx) => (
-                            <div key={idx} className="flex flex-col items-center p-4">
-                                <div className="mb-2 flex h-12 w-12 items-center justify-center rounded-full bg-indigo-600">
-                                    {/* Icon placeholder */}
+                            {
+                                title: 'Precision Formatting',
+                                description: 'Approx. 275 words/page',
+                                icon: (
+                                    <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path
+                                            strokeLinecap="round"
+                                            strokeLinejoin="round"
+                                            strokeWidth={2}
+                                            d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4"
+                                        />
+                                    </svg>
+                                ),
+                            },
+                            {
+                                title: 'Style Flexibility',
+                                description: 'All formats (APA, MLA, Chicago, etc)',
+                                icon: (
+                                    <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path
+                                            strokeLinecap="round"
+                                            strokeLinejoin="round"
+                                            strokeWidth={2}
+                                            d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"
+                                        />
+                                    </svg>
+                                ),
+                            },
+                            {
+                                title: 'Professional Standards',
+                                description: '12-point font (Arial or Times New Roman)',
+                                icon: (
+                                    <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path
+                                            strokeLinecap="round"
+                                            strokeLinejoin="round"
+                                            strokeWidth={2}
+                                            d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
+                                        />
+                                    </svg>
+                                ),
+                            },
+                            {
+                                title: 'Comprehensive Research',
+                                description: 'Free bibliography page',
+                                icon: (
+                                    <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path
+                                            strokeLinecap="round"
+                                            strokeLinejoin="round"
+                                            strokeWidth={2}
+                                            d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"
+                                        />
+                                    </svg>
+                                ),
+                            },
+                            {
+                                title: 'Phased Delivery',
+                                description: 'Progressive delivery',
+                                icon: (
+                                    <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
+                                    </svg>
+                                ),
+                            },
+                            {
+                                title: 'Professional Presentation',
+                                description: 'Free title page for written papers',
+                                icon: (
+                                    <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path
+                                            strokeLinecap="round"
+                                            strokeLinejoin="round"
+                                            strokeWidth={2}
+                                            d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
+                                        />
+                                    </svg>
+                                ),
+                            },
+                            {
+                                title: 'Ethical Standards',
+                                description: 'Academic integrity guarantee',
+                                icon: (
+                                    <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path
+                                            strokeLinecap="round"
+                                            strokeLinejoin="round"
+                                            strokeWidth={2}
+                                            d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"
+                                        />
+                                    </svg>
+                                ),
+                            },
+                            {
+                                title: 'Original Work',
+                                description: 'Plagiarism-free papers',
+                                icon: (
+                                    <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path
+                                            strokeLinecap="round"
+                                            strokeLinejoin="round"
+                                            strokeWidth={2}
+                                            d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
+                                        />
+                                    </svg>
+                                ),
+                            },
+                        ].map((feature, idx) => (
+                            <div
+                                key={idx}
+                                className="rounded-xl border border-slate-100 bg-white p-6 shadow-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-md"
+                            >
+                                <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-lg bg-orange-100 text-orange-600">
+                                    {feature.icon}
                                 </div>
-                                <p className="text-center text-lg font-bold">{text}</p>
+                                <h3 className="mb-2 text-lg font-bold text-slate-900">{feature.title}</h3>
+                                <p className="text-slate-600">{feature.description}</p>
                             </div>
                         ))}
                     </div>
+
+                    
                 </div>
             </section>
 
-            {/* Accordion, Testimonials, Blog, and Strategies Sections */}
-            {/* TODO: Replace with Accordion, Testimonials, Blog, and Strategies components */}
-            <div className="my-8 text-center text-gray-400">[Accordion, Testimonials, Blog, and Strategies Placeholders]</div>
+  
+            <div className="my-8 text-center text-gray-400"><Accordion /></div>
 
-            {/* Revision Excellence & Enhanced CTA Section */}
-            <section className="relative bg-gradient-to-b from-slate-50 to-white pt-20 pb-32">
-                <div className="mx-auto max-w-4xl px-6">
-                    <div className="mb-16 text-center">
-                        <h3 className="mb-4 font-serif text-4xl font-bold text-slate-800">Smart Academic Help Strategies</h3>
-                        <div className="mx-auto mt-6 h-1 w-24 rounded-full bg-orange-600"></div>
-                    </div>
-                    {/* Strategies - replace with dynamic content if needed */}
-                    <div className="mb-16 flex flex-col items-center gap-8 md:flex-row">
-                        <div className="text-center md:w-1/3 md:text-right">
-                            <span className="inline-block font-serif text-6xl font-bold text-orange-600">01</span>
-                        </div>
-                        <div className="md:w-2/3">
-                            <h4 className="mb-4 text-2xl font-semibold text-slate-800">Early Bird Advantage</h4>
-                            <p className="mb-4 leading-relaxed text-slate-600">
-                                Reserve expert help 7+ days in advance to unlock significant benefits:
-                            </p>
-                            <ul className="list-disc space-y-2 pl-5 text-slate-600">
-                                <li>
-                                    <span className="font-medium">Save up to 30%</span> with early orders. All our orders are priced depending on the
-                                    deadline, level of expertise and Discipline. Making your order early will save you time and upto 30% of the total
-                                    cost.
-                                </li>
-                                <li>
-                                    First pick of <span className="font-medium">top-rated writers</span> in your field. Our top rated writers will
-                                    guarantee you a value for your money.{' '}
-                                </li>
-                                <li>
-                                    Ample time for <span className="font-medium">multiple revisions</span> and refinements. All our{' '}
-                                    <span className="font-medium">revisions </span> are done free of charge to ensure that you get the best and the
-                                    quality meets your standard
-                                </li>
-                            </ul>
-                        </div>
-                    </div>
-                    <div className="mb-16 flex flex-col items-center gap-8 md:flex-row">
-                        <div className="order-2 text-center md:order-1 md:w-1/3 md:text-right">
-                            <span className="inline-block font-serif text-6xl font-bold text-orange-600">02</span>
-                        </div>
-                        <div className="order-1 md:order-2 md:w-2/3">
-                            <h4 className="mb-4 text-2xl font-semibold text-slate-800">Precision Writer Matching</h4>
-                            <p className="mb-4 leading-relaxed text-slate-600">Our rigorous selection process ensures perfect alignment:</p>
-                            <ul className="list-disc space-y-2 pl-5 text-slate-600">
-                                <li>
-                                    PhD-verified experts in <span className="font-medium">your specific discipline</span>
-                                </li>
-                                <li>
-                                    Writers with <span className="font-medium">proven track records</span> in your subject
-                                </li>
-                                <li>
-                                    Direct communication channels for <span className="font-medium">real-time collaboration</span>
-                                </li>
-                            </ul>
-                        </div>
-                    </div>
-                </div>
-                {/* Revision Excellence Section */}
-                <section className="relative -mt-24 bg-slate-800 pb-20">
-                    <div className="mx-auto max-w-7xl rounded-xl border border-orange-900/30 px-4 py-12 shadow-2xl sm:px-6 sm:py-16 xl:py-20">
-                        <div className="mx-auto max-w-7xl">
-                            <header className="xs:flex-row xs:items-center mb-10 flex flex-col items-start gap-6 sm:mb-12 lg:mb-14">
-                                <div className="space-y-2">
-                                    <h2 className="text-2xl leading-tight font-bold text-white sm:text-3xl lg:text-4xl">
-                                        <span className="section-header">Revision Excellence</span>
-                                        <br />
-                                        Framework
-                                    </h2>
-                                    <p className="max-w-2xl text-sm font-medium text-orange-300/90 sm:text-base">
-                                        Unlimited refinement protocol ensuring academic perfection across all disciplines
-                                    </p>
-                                </div>
-                            </header>
-                            <div className="grid grid-cols-1 gap-4 sm:gap-6 md:grid-cols-2 xl:grid-cols-3">
-                                {/* Feature 1 */}
-                                <article className="group relative rounded-xl border-slate-600/30 bg-slate-700/40 p-5 transition-all duration-300 sm:p-6">
-                                    <div className="flex items-start gap-4">
-                                        <div className="mt-1 flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-orange-600 text-lg font-bold text-white shadow-sm">
-                                            1
-                                        </div>
-                                        <div className="space-y-3">
-                                            <h3 className="text-lg font-semibold text-white sm:text-xl">Cost-Free Refinements</h3>
-                                            <p className="text-sm leading-relaxed text-slate-300/90 sm:text-base">
-                                                Comprehensive adjustments including formatting compliance (APA/MLA/Chicago), citation optimization,
-                                                and structural enhancements -{' '}
-                                                <span className="font-medium text-orange-300">zero additional costs</span>.
-                                            </p>
-                                        </div>
-                                    </div>
-                                </article>
-                                {/* Feature 2 */}
-                                <article className="group relative rounded-xl border-slate-600/30 bg-slate-700/40 p-5 transition-all duration-300 sm:p-6">
-                                    <div className="flex items-start gap-4">
-                                        <div className="mt-1 flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-orange-600 text-lg font-bold text-white shadow-sm">
-                                            2
-                                        </div>
-                                        <div className="space-y-3">
-                                            <h3 className="text-lg font-semibold text-white sm:text-xl">Expert Continuity Assurance</h3>
-                                            <p className="text-sm leading-relaxed text-slate-300/90 sm:text-base">
-                                                Retention of your original <span className="font-medium text-orange-300">PhD-qualified writer</span>{' '}
-                                                throughout all revision cycles, maintaining deep subject expertise and consistent quality standards.
-                                            </p>
-                                        </div>
-                                    </div>
-                                </article>
-                                {/* Feature 3 */}
-                                <article className="group relative rounded-xl border-slate-600/30 bg-slate-700/40 p-5 transition-all duration-300 sm:p-6">
-                                    <div className="flex items-start gap-4">
-                                        <div className="mt-1 flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-orange-600 text-lg font-bold text-white shadow-sm">
-                                            3
-                                        </div>
-                                        <div className="space-y-3">
-                                            <h3 className="text-lg font-semibold text-white sm:text-xl">Priority Revision Support</h3>
-                                            <p className="text-sm leading-relaxed text-slate-300/90 sm:text-base">
-                                                Expedited assistance protocol:
-                                                <span className="mt-2 block space-y-1 font-medium text-orange-300/90">
-                                                    <span className="flex items-center gap-2">✔ 2-hour response guarantee</span>
-                                                    <span className="flex items-center gap-2">✔ 6-hour turnaround option</span>
-                                                    <span className="flex items-center gap-2">✔ 24/7 availability</span>
-                                                </span>
-                                            </p>
-                                        </div>
-                                    </div>
-                                </article>
-                            </div>
-                            {/* Stats Grid */}
-                            <div className="mt-10 rounded-xl bg-gradient-to-r from-orange-900/30 via-slate-800/50 to-slate-800/50 p-5 backdrop-blur-sm sm:mt-12 sm:p-6">
-                                <div className="grid grid-cols-2 gap-4 text-center sm:grid-cols-4 sm:gap-6">
-                                    <div className="space-y-1 border-r border-orange-800/30 pr-4 last:border-0 sm:space-y-2 sm:pr-6">
-                                        <p className="text-2xl font-bold text-orange-400 sm:text-3xl">
-                                            92<span className="text-lg sm:text-xl">%</span>
-                                        </p>
-                                        <p className="text-xs leading-tight font-medium text-orange-200/90 sm:text-sm">B+ or Higher Grades</p>
-                                    </div>
-                                    <div className="space-y-1 border-r border-orange-800/30 pr-4 last:border-0 sm:space-y-2 sm:pr-6">
-                                        <p className="text-2xl font-bold text-orange-400 sm:text-3xl">
-                                            68<span className="text-lg sm:text-xl">%</span>
-                                        </p>
-                                        <p className="text-xs leading-tight font-medium text-orange-200/90 sm:text-sm">Score Improvements</p>
-                                    </div>
-                                    <div className="space-y-1 border-r border-orange-800/30 pr-4 last:border-0 sm:space-y-2 sm:pr-6">
-                                        <p className="text-2xl font-bold text-orange-400 sm:text-3xl">24/7</p>
-                                        <p className="text-xs leading-tight font-medium text-orange-200/90 sm:text-sm">Support Availability</p>
-                                    </div>
-                                    <div className="space-y-1 sm:space-y-2">
-                                        <p className="text-2xl font-bold text-orange-400 sm:text-3xl">0$</p>
-                                        <p className="text-xs leading-tight font-medium text-orange-200/90 sm:text-sm">Extra Fees</p>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    {/* Enhanced CTA */}
-                    <div className="relative mt-12 overflow-hidden rounded-xl bg-indigo-600 p-8 text-center md:p-10">
-                        <div className="absolute -top-20 -right-20 h-64 w-64 rounded-full bg-orange-700 opacity-20"></div>
-                        <div className="absolute -bottom-20 -left-20 h-64 w-64 rounded-full bg-orange-700 opacity-20"></div>
-                        <div className="relative z-10">
-                            <h3 className="mb-6 text-3xl font-bold text-white">Ready for Academic Success?</h3>
-                            <p className="mx-auto mb-8 max-w-2xl text-xl text-orange-100">
-                                Join thousands of students who trust our expert writers for their most important assignments
-                            </p>
-                            <div className="flex flex-col justify-center gap-4 sm:flex-row">
-                                <a
-                                    href="#"
-                                    className="flex-1 transform rounded-lg bg-white px-8 py-4 text-center font-bold text-orange-600 shadow-lg transition-all duration-300 hover:scale-105 hover:bg-slate-100 hover:shadow-xl sm:flex-none"
-                                >
-                                    Get Started Now
-                                </a>
-                                <a
-                                    href="#"
-                                    className="hover:bg-opacity-10 flex-1 transform rounded-lg border-2 border-white px-8 py-4 text-center font-bold text-white shadow-lg transition-all duration-300 hover:scale-105 hover:bg-white hover:shadow-xl sm:flex-none"
-                                >
-                                    Speak to an Expert
-                                </a>
-                            </div>
-                            <p className="mt-6 text-sm text-orange-100">
-                                <span className="mr-1 inline-block h-5 w-5 align-middle">✔</span>
-                                100% Original Work • 24/7 Support • Money-Back Guarantee
-                            </p>
-                        </div>
-                    </div>
-                </section>
-            </section>
+            <AcademicExcellenceSection />
         </GuestLayout>
     );
 }
