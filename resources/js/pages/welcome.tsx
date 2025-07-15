@@ -1,8 +1,9 @@
 import GlobalCalculator from '@/components/global-calculator';
 import ServiceSteps from '@/components/our-services';
+import Samples from '@/components/samples';
 import GuestLayout from '@/layouts/GuestLayout';
-import { LightBulbIcon, PaperAirplaneIcon } from '@heroicons/react/24/outline';
 import { Head } from '@inertiajs/react';
+import { DollarSign, Pen, Search } from 'lucide-react';
 
 export default function Welcome() {
     return (
@@ -252,7 +253,7 @@ export default function Welcome() {
                 <div className="mx-auto flex max-w-7xl gap-4 overflow-x-auto md:overflow-visible">
                     {/* Guarantee cards */}
                     <div className="flex min-w-[300px] flex-col items-start gap-4 p-3 md:min-w-0 md:flex-row md:items-center md:gap-6">
-                        <div className="flex-shrink-0 rounded-lg bg-white p-3 shadow-sm">{/* Search SVG */}</div>
+                        <div className="flex-shrink-0 rounded-lg bg-white p-3 shadow-sm"><Search className='text-black'/></div>
                         <div>
                             <h1 className="text-lg font-extrabold md:text-xl">Zero plagiarism</h1>
                             <p className="text-sm text-white/90 md:text-base">
@@ -261,14 +262,14 @@ export default function Welcome() {
                         </div>
                     </div>
                     <div className="flex min-w-[300px] flex-col items-start gap-4 p-3 md:min-w-0 md:flex-row md:items-center md:gap-6">
-                        <div className="flex-shrink-0 rounded-lg bg-white p-3 shadow-sm">{/* Pen SVG */}</div>
+                        <div className="flex-shrink-0 rounded-lg bg-white p-3 shadow-sm text-black"><Pen /></div>
                         <div>
                             <h1 className="text-lg font-extrabold md:text-xl">Free revisions</h1>
                             <p className="text-sm text-white/90 md:text-base">We polish your essay for free if you don’t add any new guidelines.</p>
                         </div>
                     </div>
                     <div className="flex min-w-[300px] flex-col items-start gap-4 p-3 md:min-w-0 md:flex-row md:items-center md:gap-6">
-                        <div className="flex-shrink-0 rounded-lg bg-white p-3 shadow-sm">{/* Money SVG */}</div>
+                        <div className="flex-shrink-0 rounded-lg bg-white p-3 shadow-sm text-black"><DollarSign /></div>
                         <div>
                             <h1 className="text-lg font-extrabold md:text-xl">Money-back</h1>
                             <p className="text-sm text-white/90 md:text-base">
@@ -282,7 +283,7 @@ export default function Welcome() {
             {/* Samples Section */}
             <div className="bg-white/90 py-6">
                 {/* TODO: Replace with Samples component */}
-                <div className="text-center text-gray-400">[Samples Placeholder]</div>
+                <div className="text-center text-gray-400"><Samples /></div>
             </div>
 
             {/* Qualified Writers Section */}
