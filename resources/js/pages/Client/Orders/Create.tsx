@@ -41,8 +41,11 @@ interface OrderFormData {
     addons: string[];
     subject: string;
     files: File[];
-    source_count?: string;
-    citation_style?: string;
+    source_count: string;
+    citation_style: string;
+    title: string;
+    promo_code: string; // <-- Add promo code
+    topic: string; // <-- Add topic
     [key: string]: string | number | boolean | string[] | File[];
 }
 
@@ -266,7 +269,21 @@ const OrderSummary = ({
     handleDiscard: () => void;
 }) => {
     const totalPrice = useMemo(() => calculateTotalPrice(data), [data]);
-    const stepLabels = ['Assignment Type', 'Service', 'Academic Level', 'Language', 'Size', 'Deadline', 'Add-ons', 'Assignment Topic', 'Subject'];
+    // Add 'Title' as a step before 'Subject'
+    const stepLabels = [
+        'Assignment Type',
+        'Service',
+        'Academic Level',
+        'Language',
+        'Size',
+        'Deadline',
+        'Add-ons',
+        'Topic',
+        'Subject',
+        'Instructions',
+        'Sources & Style',
+        'Promo code',
+    ];
     const getStepValue = (step: number) => {
         switch (step) {
             case 1:
@@ -278,15 +295,23 @@ const OrderSummary = ({
             case 4:
                 return currentStep > 4 ? LANGUAGES.find((l) => l.id === data.language)?.label || '' : '';
             case 5:
-                return currentStep > 5 && data.pages && data.words ? `${data.pages} pages (${data.words} words) - ${data.line_spacing} spacing` : '';
+                return currentStep > 5 && data.pages && data.words ? `${data.pages} pages (~ ${data.words} words), ${data.line_spacing} spacing` : '';
             case 6:
                 return data.deadline ? new Date(data.deadline).toLocaleString() : '';
             case 7:
                 return data.addons?.length ? `${data.addons.length} addon${data.addons.length > 1 ? 's' : ''} selected` : '';
             case 8:
-                return data.instructions || '';
+                return data.topic || '';
             case 9:
                 return data.subject || '';
+            case 10:
+                return data.instructions || '';
+            case 11:
+                return data.source_count || data.citation_style
+                    ? `${data.source_count ? `${data.source_count} sources` : ''}${data.source_count && data.citation_style ? ' / ' : ''}${data.citation_style ? `${data.citation_style.toUpperCase()}${data.citation_style === 'apa' ? ' 7th edition' : ''}` : ''}`
+                    : '';
+            case 12:
+                return data.promo_code || '';
             default:
                 return '';
         }
@@ -302,7 +327,7 @@ const OrderSummary = ({
         <div className="sticky top-8 mb-8 rounded-lg bg-white/90 p-3 shadow-[0_10px_40px_-15px_rgba(0,0,0,0.1)] backdrop-blur-md">
             <div className="mb-4 flex items-center justify-between">
                 <h2 className="text-lg font-bold text-gray-900">Order Summary</h2>
-                <div className="rounded-full bg-gray-100 px-3 py-1 text-sm font-medium text-gray-600">Step {currentStep} of 9</div>
+                <div className="rounded-full bg-gray-100 px-3 py-1 text-sm font-medium text-gray-600">Step {currentStep} of 12</div>
             </div>
             <div className="">
                 {filledSteps.map(({ label, value, step }) => (
@@ -416,7 +441,7 @@ const OptionCard = ({ id, label, selected, onClick, icon, popular, description }
                 </svg>
             )}
         </div>
-        <div className='flex items-center gap-2'>
+        <div className="flex items-center gap-2">
             {/* Icon */}
             {icon && (
                 <div className={`transition-transform ${selected ? 'scale-110' : ''}`}>
@@ -480,6 +505,11 @@ export default function Create({ auth }: { auth: Auth }) {
         addons: [],
         subject: '',
         files: [],
+        source_count: '',
+        citation_style: '',
+        title: '',
+        promo_code: '', // <-- Add promo_code
+        topic: '', // <-- Add topic
     });
 
     // Filtering logic for assignment types
@@ -496,7 +526,14 @@ export default function Create({ auth }: { auth: Auth }) {
     useEffect(() => {
         axios.get('/api/client/orders/draft').then((res) => {
             if (res.data.draft) {
-                setData(res.data.draft);
+                setData({
+                    ...res.data.draft,
+                    source_count: res.data.draft.source_count || '',
+                    citation_style: res.data.draft.citation_style || '',
+                    title: res.data.draft.title || '',
+                    promo_code: res.data.draft.promo_code || '', // <-- Add promo_code
+                    topic: res.data.draft.topic || '', // <-- Add topic
+                });
                 setDraftId(res.data.draft.id);
                 setUploadedFiles(res.data.draft.files || []);
             }
@@ -527,7 +564,7 @@ export default function Create({ auth }: { auth: Auth }) {
     };
 
     const handleNext = () => {
-        if (currentStep < 9) setCurrentStep(currentStep + 1);
+        if (currentStep < 12) setCurrentStep(currentStep + 1);
         else handleSubmit();
     };
 
@@ -568,9 +605,11 @@ export default function Create({ auth }: { auth: Auth }) {
         'Size',
         'Deadline',
         'Add-ons',
+        'Topic',
         'Subject',
         'Instructions',
         'Sources & Style',
+        'Promo code',
         'Summary',
     ];
     const renderStep = () => {
@@ -841,14 +880,6 @@ export default function Create({ auth }: { auth: Auth }) {
                                 <AddonCard key={addon.id} addon={addon} selected={data.addons.includes(addon.id)} onClick={toggleAddon} />
                             ))}
                         </div>
-                        <div className="mt-8">
-                            <FileUpload
-                                orderId={draftId || ''}
-                                files={uploadedFiles}
-                                onFilesUploaded={(newFiles: UploadedFile[]) => setUploadedFiles((prev) => [...prev, ...newFiles])}
-                                onRemove={handleRemoveFile}
-                            />
-                        </div>
                     </div>
                 );
 
@@ -856,7 +887,25 @@ export default function Create({ auth }: { auth: Auth }) {
                 return (
                     <div className="space-y-8">
                         <div>
-                            <h2 className="text-2xl font-bold text-gray-900">{stepTitles[7]}</h2>
+                            <h2 className="text-2xl font-bold text-gray-900">Topic</h2>
+                            <p className="mt-2 text-gray-500">Enter the topic for your assignment.</p>
+                        </div>
+                        <input
+                            type="text"
+                            value={data.topic || ''}
+                            onChange={(e) => setData('topic', e.target.value)}
+                            placeholder="e.g., The Impact of Climate Change on Global Agriculture"
+                            className="w-full rounded-xl border border-gray-300 bg-white px-4 py-3 text-gray-800 shadow-sm focus:border-blue-500 focus:ring-2 focus:ring-blue-500"
+                            maxLength={120}
+                        />
+                    </div>
+                );
+
+            case 9:
+                return (
+                    <div className="space-y-8">
+                        <div>
+                            <h2 className="text-2xl font-bold text-gray-900">Subject</h2>
                             <p className="mt-2 text-gray-500">Select your subject area</p>
                         </div>
 
@@ -921,7 +970,7 @@ export default function Create({ auth }: { auth: Auth }) {
                     </div>
                 );
 
-            case 9:
+            case 10:
                 return (
                     <div className="space-y-8">
                         <div>
@@ -951,7 +1000,7 @@ export default function Create({ auth }: { auth: Auth }) {
                     </div>
                 );
 
-            case 10:
+            case 11:
                 return (
                     <div className="space-y-8">
                         <div>
@@ -988,8 +1037,23 @@ export default function Create({ auth }: { auth: Auth }) {
                     </div>
                 );
 
-            case 11:
-                return null;
+            case 12:
+                return (
+                    <div className="space-y-8">
+                        <div>
+                            <h2 className="text-2xl font-bold text-gray-900">Promo code</h2>
+                            <p className="mt-2 text-gray-500">Enter a promo code if you have one.</p>
+                        </div>
+                        <input
+                            type="text"
+                            value={data.promo_code || ''}
+                            onChange={(e) => setData('promo_code', e.target.value)}
+                            placeholder="e.g., SAVE10"
+                            className="w-full rounded-xl border border-gray-300 bg-white px-4 py-3 text-gray-800 shadow-sm focus:border-blue-500 focus:ring-2 focus:ring-blue-500"
+                            maxLength={32}
+                        />
+                    </div>
+                );
 
             default:
                 return null;
@@ -1087,9 +1151,11 @@ export default function Create({ auth }: { auth: Auth }) {
                                                         'Size',
                                                         'Deadline',
                                                         'Add-ons',
+                                                        'Topic',
                                                         'Subject',
                                                         'Instructions',
                                                         'Sources & Style',
+                                                        'Promo code',
                                                         'Summary',
                                                     ][currentStep - 1]
                                                 }
@@ -1103,7 +1169,7 @@ export default function Create({ auth }: { auth: Auth }) {
                                         currentStep={currentStep}
                                         onNext={handleNext}
                                         onBack={handleBack}
-                                        isLastStep={currentStep === 11}
+                                        isLastStep={currentStep === 12}
                                         processing={processing}
                                     />
                                 </div>
