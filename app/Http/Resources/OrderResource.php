@@ -71,6 +71,16 @@ class OrderResource extends JsonResource
             'can_be_edited' => $this->when(method_exists($this, 'canBeEdited'), fn() => $this->canBeEdited()),
             'is_overdue' => $this->when(method_exists($this, 'isOverdue'), fn() => $this->isOverdue()),
             'needs_attention' => $this->when(method_exists($this, 'needsAttention'), fn() => $this->needsAttention()),
+            'academicLevel' => $this->whenLoaded('academicLevel', function () {
+                return [
+                    'name' => optional($this->academicLevel)->name,
+                ];
+            }),
+            'subjectCategory' => $this->whenLoaded('subjectCategory', function () {
+                return [
+                    'name' => optional($this->subjectCategory)->name,
+                ];
+            }),
         ];
     }
 }

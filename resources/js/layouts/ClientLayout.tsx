@@ -7,9 +7,7 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSepara
 import { User } from '@/types';
 import { Link } from '@inertiajs/react';
 import { ChevronDownIcon, FilePlus2, FileText, Gift, HelpCircle, LogOut, Percent, UserCog2, Wallet } from 'lucide-react';
-import { useRef, useState } from 'react';;
-import { PropsWithChildren } from 'react';
-
+import { PropsWithChildren, useRef, useState } from 'react';
 interface Props {
     user: User;
     children: React.ReactNode;
@@ -20,10 +18,8 @@ export default function ClientLayout({ children, user }: PropsWithChildren<Props
     const triggerRef = useRef<HTMLButtonElement>(null);
     const currentPath = typeof window !== 'undefined' ? window.location.pathname : '';
 
-
     const handleMouseEnter = () => setOpen(true);
     const handleMouseLeave = (e: React.MouseEvent) => {
- 
         if (!triggerRef.current?.contains(e.relatedTarget as Node)) {
             setOpen(false);
         }
@@ -72,7 +68,7 @@ export default function ClientLayout({ children, user }: PropsWithChildren<Props
                                 </div>
                                 <DropdownMenuSeparator />
                                 <DropdownMenuItem asChild>
-                                    <Link href="/client/orders" className="flex w-full items-center gap-2">
+                                    <Link href="/client/dashboard/orders?tab=recent" className="flex w-full items-center gap-2">
                                         <FileText className="size-4 text-blue-500" />
                                         My Orders
                                     </Link>
@@ -99,7 +95,7 @@ export default function ClientLayout({ children, user }: PropsWithChildren<Props
                     <MaxWidthWrapper className="flex w-full items-center justify-between">
                         <div className="flex h-full gap-2">
                             <Link
-                                href="/client/orders"
+                                href="/client/dashboard/orders?tab=recent"
                                 className={`flex h-full items-center gap-2 rounded-lg px-4 py-2 font-medium text-white transition-colors duration-200 hover:bg-[#048e86] ${currentPath.startsWith('/client/orders') ? 'bg-[#048e86] shadow-md' : ''}`}
                             >
                                 <Icon iconNode={FileText} className="h-5 w-5 text-white" />
@@ -131,12 +127,13 @@ export default function ClientLayout({ children, user }: PropsWithChildren<Props
                                 <Icon iconNode={HelpCircle} className="h-5 w-5 text-white" />
                                 Free Inquiry
                             </Link>
-                            <a className="flex h-full items-center gap-2 rounded-lg px-4 py-2 font-medium text-white hover:bg-[#048e86]">
-                                <Link href={route('client.orders.create')} className="flex gap-2">
-                                    <Icon iconNode={FilePlus2} className="h-5 w-5 text-white" />
-                                    New Order
-                                </Link>
-                            </a>
+                            <Link
+                                href={route('client.orders.create')}
+                                className="flex h-full items-center gap-2 rounded-lg px-4 py-2 font-medium text-white hover:bg-[#048e86]"
+                            >
+                                <Icon iconNode={FilePlus2} className="h-5 w-5 text-white" />
+                                New Order
+                            </Link>
                         </div>
                     </MaxWidthWrapper>
                 </nav>

@@ -1,100 +1,152 @@
 import MaxWidthWrapper from '@/components/MaxWidthWrapper';
+import OrderCard from '@/components/OrderCard';
 import ClientLayout from '@/layouts/ClientLayout';
 import { User } from '@/types';
 import { Link } from '@inertiajs/react';
-import { FileText, Plus } from 'lucide-react';
-import { useState } from 'react';
+import { CheckCircle, Clock, FileText, XCircle } from 'lucide-react';
+import { useEffect, useState } from 'react';
+
+interface Order {
+    id: number;
+    title: string;
+    status: string;
+    deadline: string;
+    subject?: string;
+    pages?: number;
+    academic_level?: string;
+    total_price?: number;
+    writer_name?: string;
+}
 
 interface Props {
     auth: {
         user: User;
     };
+    recent_orders: Order[];
 }
 
 const TABS = [
-    { key: 'recent', label: 'Recent' },
-    { key: 'finished', label: 'Finished' },
-    { key: 'canceled', label: 'Canceled' },
+    { key: 'recent', label: 'Recent Orders', icon: <Clock className="h-5 w-5" /> },
+    { key: 'finished', label: 'Completed', icon: <CheckCircle className="h-5 w-5" /> },
+    { key: 'canceled', label: 'Cancelled', icon: <XCircle className="h-5 w-5" /> },
 ];
 
-function Spinner() {
+function EmptyState({ title, description, icon }: { title: string; description: string; icon: React.ReactNode }) {
     return (
-        <div className="flex items-center justify-center py-12">
-            <svg className="h-8 w-8 animate-spin text-blue-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8z"></path>
-            </svg>
+        <div className="flex flex-col items-center justify-center rounded-xl border border-dashed border-gray-200 bg-white p-8 text-center">
+            <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-gray-50">{icon}</div>
+            <h3 className="mt-4 text-lg font-semibold text-gray-900">{title}</h3>
+            <p className="mt-2 max-w-md text-sm text-gray-500">{description}</p>
         </div>
     );
 }
 
-function NoOrdersEmptyState() {
-    return (
-        <div className="flex flex-col items-center justify-center rounded-lg p-6">
-            <div className="mb-6 flex h-24 w-24 items-center justify-center rounded-full bg-white shadow-sm">
-                <FileText className="h-12 w-12 text-blue-500" />
-            </div>
-
-            <div className="max-w-md text-center">
-                <h2 className="mb-3 text-xl font-semibold text-gray-800">No Orders Yet</h2>
-                <p className="mb-6 text-gray-600">Create your first order to get started</p>
-                <div className="flex justify-center">
-                    <Link href="/client/orders/create">
-                        <button className="flex items-center gap-2 rounded-md bg-blue-600 px-6 py-3 font-medium text-white hover:bg-blue-700">
-                            <Plus className="h-5 w-5" />
-                            Create Order
-                        </button>
-                    </Link>
-                </div>
-            </div>
-        </div>
-    );
-}
-
-export default function Dashboard({ auth }: Props) {
-    const [activeTab, setActiveTab] = useState('recent');
-    const [loading, setLoading] = useState(false);
-
-    const handleTabClick = (tab: string) => {
-        if (tab !== activeTab) {
-            setLoading(true);
-            setActiveTab(tab);
-            setTimeout(() => setLoading(false), 700); // Simulate loading
-        }
+// Helper function to map your status to the progress steps
+function mapStatusToStep(status: string): string {
+    const statusMap: Record<string, string> = {
+        pending_payment: 'payment',
+        writer_pending: 'writer',
+        in_progress: 'progress',
+        review: 'review',
+        completed: 'approval',
+        cancelled: 'payment', // fallback for cancelled
     };
+    return statusMap[status] || 'payment';
+}
+
+export default function Dashboard({ auth, recent_orders }: Props) {
+    const searchParams = new URLSearchParams(typeof window !== 'undefined' ? window.location.search : '');
+    const tabParam = searchParams.get('tab') || 'recent';
+    const [activeTab, setActiveTab] = useState(tabParam);
+
+    useEffect(() => {
+        setActiveTab(tabParam);
+    }, [tabParam]);
+
+    // Filter orders by tab
+    let filteredOrders = recent_orders;
+    if (activeTab === 'finished') {
+        filteredOrders = recent_orders.filter((order) => order.status === 'completed');
+    } else if (activeTab === 'canceled') {
+        filteredOrders = recent_orders.filter((order) => order.status === 'cancelled');
+    }
 
     return (
         <ClientLayout user={auth.user}>
-            {/* Orders Tabs */}
-            <section className="flex w-full flex-1 flex-col">
-                <MaxWidthWrapper className="relative mt-2 mb-8 flex w-full flex-col">
-                    <div className="flex justify-start gap-2">
-                        {TABS.map((tab) => (
-                            <button
-                                key={tab.key}
-                                onClick={() => handleTabClick(tab.key)}
-                                className={`relative z-10 bg-transparent py-2 font-semibold transition-all duration-200 focus:outline-none ${
-                                    activeTab === tab.key ? 'text-blue-700' : 'text-gray-700 hover:bg-blue-50 hover:text-blue-700'
-                                } `}
-                                style={{ minWidth: 110 }}
-                            >
-                                <span className="relative">
-                                    {tab.label}
-                                    <span
-                                        className={`absolute right-0 -bottom-3 left-0 block transition-all duration-200 ${
-                                            activeTab === tab.key ? 'h-1  bg-blue-600' : ''
-                                        } `}
-                                    />
-                                </span>
-                            </button>
-                        ))}
+            <div className="bg-gray-50 py-8">
+                <MaxWidthWrapper>
+                    <div className="mb-8">
+                       
+
+                        {/* Tabs */}
+                        <div className="mt-8">
+                            <div className="border-b border-gray-200">
+                                <nav className="-mb-px flex space-x-4 overflow-x-auto pb-px sm:space-x-8" aria-label="Tabs">
+                                    {TABS.map((tab) => (
+                                        <Link
+                                            key={tab.key}
+                                            href={`/client/dashboard/orders?tab=${tab.key}`}
+                                            className={`flex items-center gap-2 border-b-2 px-1 py-3 text-sm font-medium whitespace-nowrap ${
+                                                activeTab === tab.key
+                                                    ? 'border-blue-500 text-blue-600'
+                                                    : 'border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700'
+                                            } `}
+                                        >
+                                            {tab.icon}
+                                            {tab.label}
+                                        </Link>
+                                    ))}
+                                </nav>
+                            </div>
+                        </div>
                     </div>
-                    <div className="absolute right-0 bottom-0 left-0 z-0 h-0.5 w-full bg-gray-200" />
+
+                    {/* Orders List */}
+                    <div className="mt-6">
+                        {filteredOrders.length > 0 ? (
+                            <div className="grid grid-cols-1 gap-6">
+                                {filteredOrders.map((order) => (
+                                    <OrderCard
+                                        key={order.id}
+                                        order={{
+                                            ...order,
+                                            status: mapStatusToStep(order.status),
+                                            subject: order.subject || '',
+                                            pages: order.pages ?? 0,
+                                            academic_level: order.academic_level || '',
+                                            total_price: order.total_price ?? 0,
+                                        }}
+                                    />
+                                ))}
+                            </div>
+                        ) : (
+                            <div className="mt-8">
+                                {activeTab === 'recent' && (
+                                    <EmptyState
+                                        title="No active orders"
+                                        description="Get started by creating your first academic writing order. Our expert writers are ready to help you succeed."
+                                        icon={<FileText className="h-6 w-6 text-gray-400" />}
+                                    />
+                                )}
+                                {activeTab === 'finished' && (
+                                    <EmptyState
+                                        title="No completed orders"
+                                        description="Completed orders will appear here once your assignments are finished."
+                                        icon={<CheckCircle className="h-6 w-6 text-gray-400" />}
+                                    />
+                                )}
+                                {activeTab === 'canceled' && (
+                                    <EmptyState
+                                        title="No canceled orders"
+                                        description="Cancelled orders will appear here if you choose to cancel any assignments."
+                                        icon={<XCircle className="h-6 w-6 text-gray-400" />}
+                                    />
+                                )}
+                            </div>
+                        )}
+                    </div>
                 </MaxWidthWrapper>
-                <MaxWidthWrapper className="flex min-h-[240px] w-full items-center justify-center">
-                    {loading ? <Spinner /> : <NoOrdersEmptyState />}
-                </MaxWidthWrapper>
-            </section>
+            </div>
         </ClientLayout>
     );
 }

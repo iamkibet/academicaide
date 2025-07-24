@@ -83,6 +83,13 @@ class Order extends Model
             ->withTimestamps();
     }
 
+    public function addons()
+    {
+        return $this->belongsToMany(Addon::class, 'order_addon')
+            ->withPivot('price')
+            ->withTimestamps();
+    }
+
     public function calculateTotalPrice()
     {
         $pricingService = new OrderPricingService($this);

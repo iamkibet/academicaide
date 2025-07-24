@@ -23,6 +23,7 @@ class DashboardController extends Controller
 
         $recent_orders = $user->orders()
             ->with(['files', 'subjectCategory', 'academicLevel'])
+            ->whereNotIn('status', ['draft', 'cancelled'])
             ->latest()
             ->take(5)
             ->get();
@@ -32,7 +33,37 @@ class DashboardController extends Controller
                 'user' => $user
             ],
             'stats' => $stats,
-            'recent_orders' => OrderResource::collection($recent_orders),
+            'recent_orders' => OrderResource::collection($recent_orders)->toArray(request()),
+        ]);
+    }
+
+    public function ordersList(Request $request)
+    {
+        $user = $request->user();
+        $tab = $request->query('tab', 'recent');
+        $query = $user->orders()->with(['files', 'subjectCategory', 'academicLevel']);
+        if ($tab === 'finished') {
+            $query->where('status', 'completed');
+        } elseif ($tab === 'canceled') {
+            $query->where('status', 'cancelled');
+        } else {
+            $query->whereNotIn('status', ['draft', 'cancelled']);
+        }
+        $orders = $query->latest()->get();
+        return Inertia::render('Client/Orders/List', [
+            'auth' => ['user' => $user],
+            'orders' => OrderResource::collection($orders)->toArray($request),
+            'tab' => $tab,
+        ]);
+    }
+
+    public function orderInfo(Request $request, Order $order)
+    {
+        $this->authorize('view', $order);
+        $order->load(['files', 'subjectCategory', 'academicLevel', 'client']);
+        return Inertia::render('Client/Orders/ShowInfo', [
+            'auth' => ['user' => $request->user()],
+            'order' => new OrderResource($order),
         ]);
     }
 }

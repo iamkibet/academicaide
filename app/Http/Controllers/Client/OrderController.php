@@ -44,6 +44,7 @@ class OrderController extends Controller
                         ->orWhere('id', 'like', "%{$search}%");
                 });
             })
+            ->whereIn('status', ['pending', 'active', 'pending_payment', 'in_progress', 'review', 'completed'])
             ->latest()
             ->paginate(10)
             ->withQueryString();
@@ -65,12 +66,23 @@ class OrderController extends Controller
         ]);
     }
 
-    public function create()
+    public function create(Request $request)
     {
         $pricingData = $this->pricingService->getPricingData();
-
+        $user = $request->user();
         return Inertia::render('Client/Orders/Create', [
-            'pricingData' => $pricingData
+            'pricingData' => $pricingData,
+            'auth' => [
+                'user' => $user ? [
+                    'id' => $user->id,
+                    'name' => $user->name,
+                    'email' => $user->email,
+                    'role' => $user->role,
+                    'email_verified_at' => $user->email_verified_at,
+                    'created_at' => $user->created_at,
+                    'updated_at' => $user->updated_at,
+                ] : null
+            ]
         ]);
     }
 
@@ -157,14 +169,21 @@ class OrderController extends Controller
             'messages.attachments'
         ]);
 
+        // Fetch all active addons for the sidebar
+        $availableAddons = \App\Models\Addon::where('is_active', true)
+            ->orderBy('display_order')
+            ->get(['id', 'name', 'slug', 'price', 'is_free'])
+            ->toArray();
+
         // Debug the order data
         Log::info('Order data:', ['order' => $order->toArray()]);
 
         return Inertia::render('Client/Orders/Show', [
-            'order' => $order,
+            'order' => (new OrderResource($order))->toArray(request()),
             'auth' => [
                 'user' => Auth::user()
-            ]
+            ],
+            'availableAddons' => is_array($availableAddons) ? $availableAddons : [],
         ]);
     }
 
@@ -188,64 +207,43 @@ class OrderController extends Controller
     {
         $this->authorize('update', $order);
 
-        $validated = $request->validate([
-            'title' => 'required|string|max:255',
-            'description' => 'required|string',
-            'subject_category_id' => 'required|exists:subject_categories,id',
-            'academic_level_id' => 'required|exists:academic_levels,id',
-            'deadline_option_id' => 'required|exists:deadline_options,id',
-            'pages' => 'required|integer|min:1',
-            'spacing' => 'required|in:single,double',
-            'addon_ids' => 'nullable|array',
-            'addon_ids.*' => 'exists:addons,id',
-            'files' => 'nullable|array',
-            'files.*' => 'file|max:10240', // 10MB max per file
-        ]);
-
-        $pricingService = new OrderPricingService();
-        $pricing = $pricingService->calculatePrice(
-            $validated['pages'],
-            $validated['academic_level_id'],
-            $validated['deadline_option_id'],
-            $validated['spacing'],
-            $validated['addon_ids'] ?? []
-        );
-
-        DB::beginTransaction();
-
-        try {
-            $order->update([
-                'title' => $validated['title'],
-                'description' => $validated['description'],
-                'subject_category_id' => $validated['subject_category_id'],
-                'academic_level_id' => $validated['academic_level_id'],
-                'deadline_option_id' => $validated['deadline_option_id'],
-                'pages' => $validated['pages'],
-                'spacing' => $validated['spacing'],
-                'total_amount' => $pricing['total'],
-            ]);
-
-            $order->addons()->sync($validated['addon_ids'] ?? []);
-
-            if ($request->hasFile('files')) {
-                foreach ($request->file('files') as $file) {
-                    $path = $file->store('order-files');
-                    $order->files()->create([
-                        'name' => $file->getClientOriginalName(),
-                        'path' => $path,
-                        'size' => $file->getSize(),
-                    ]);
-                }
-            }
-
-            DB::commit();
-
-            return redirect()->route('client.orders.show', $order)
-                ->with('success', 'Order updated successfully.');
-        } catch (\Exception $e) {
-            DB::rollBack();
-            throw $e;
+        // Accept partial updates for pages, slides, charts, and addons
+        $data = $request->only(['pages', 'slides', 'charts', 'addon_ids']);
+        $updatedFields = [];
+        if (isset($data['pages'])) {
+            $validated = $request->validate(['pages' => 'required|integer|min:1']);
+            $updatedFields['pages'] = $validated['pages'];
         }
+        if (isset($data['slides'])) {
+            $validated = $request->validate(['slides' => 'required|integer|min:0']);
+            $updatedFields['slides'] = $validated['slides'];
+        }
+        if (isset($data['charts'])) {
+            $validated = $request->validate(['charts' => 'required|integer|min:0']);
+            $updatedFields['charts'] = $validated['charts'];
+        }
+        if (!empty($updatedFields)) {
+            $order->update($updatedFields);
+        }
+        if (isset($data['addon_ids'])) {
+            $validated = $request->validate(['addon_ids' => 'array', 'addon_ids.*' => 'exists:addons,id']);
+            $order->addons()->sync($validated['addon_ids']);
+        }
+        // Recalculate total price if pages, slides, charts, or addons changed
+        if (!empty($updatedFields) || isset($data['addon_ids'])) {
+            $pricingService = new OrderPricingService();
+            $order->refresh();
+            $order->total_price = $pricingService->calculatePrice([
+                'pages' => $order->pages,
+                'slides' => $order->slides ?? 0,
+                'charts' => $order->charts ?? 0,
+                'academic_level' => $order->academic_level,
+                'deadline' => $order->deadline,
+                'addons' => $order->addons->pluck('id')->toArray(),
+            ]);
+            $order->save();
+        }
+        return redirect()->route('client.orders.show', $order)->with('success', 'Order updated successfully.');
     }
 
     public function requestRevision(Order $order, Request $request)
@@ -356,7 +354,7 @@ class OrderController extends Controller
     public function updateDraft(Request $request, Order $order)
     {
         $user = $request->user();
-        if ($order->user_id !== $user->id || $order->status !== 'draft') {
+        if ($order->client_id !== $user->id || $order->status !== 'draft') {
             abort(403);
         }
         $validated = $request->validate([
@@ -386,7 +384,7 @@ class OrderController extends Controller
     public function discardDraft(Request $request, Order $order)
     {
         $user = $request->user();
-        if ($order->user_id !== $user->id || $order->status !== 'draft') {
+        if ($order->client_id !== $user->id || $order->status !== 'draft') {
             abort(403);
         }
         $order->delete();
@@ -399,7 +397,7 @@ class OrderController extends Controller
     public function uploadFile(Request $request, Order $order)
     {
         $user = $request->user();
-        if ($order->user_id !== $user->id || $order->status !== 'draft') {
+        if ($order->client_id !== $user->id || $order->status !== 'draft') {
             abort(403);
         }
         $request->validate([
@@ -427,7 +425,7 @@ class OrderController extends Controller
     public function removeFile(Request $request, Order $order, $fileId)
     {
         $user = $request->user();
-        if ($order->user_id !== $user->id || $order->status !== 'draft') {
+        if ($order->client_id !== $user->id || $order->status !== 'draft') {
             abort(403);
         }
         $file = $order->files()->findOrFail($fileId);
@@ -441,12 +439,25 @@ class OrderController extends Controller
     public function submitOrder(Request $request, Order $order)
     {
         $user = $request->user();
-        if ($order->user_id !== $user->id || $order->status !== 'draft') {
+        if ($order->client_id !== $user->id || $order->status !== 'draft') {
             abort(403);
         }
         // Here you would handle payment logic (integration with payment gateway)
         // For now, we just mark as active
         $order->update(['status' => 'active']);
+        return response()->json(['order' => $order]);
+    }
+
+    /**
+     * Mark an order as pending payment (Pay Later action).
+     */
+    public function payLater(Request $request, Order $order)
+    {
+        $user = $request->user();
+        if ($order->client_id !== $user->id || $order->status !== 'draft') {
+            abort(403);
+        }
+        $order->update(['status' => 'pending_payment']);
         return response()->json(['order' => $order]);
     }
 }

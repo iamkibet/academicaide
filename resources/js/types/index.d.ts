@@ -42,34 +42,35 @@ export interface User {
 
 export interface Order {
     id: number;
-    client_id: number;
-    admin_id: number | null;
     title: string;
-    subject: string;
-    academic_level: string;
-    citation_style: string | null;
-    pages: number;
-    word_count: number | null;
-    price_per_page: number | null;
-    discount: number | null;
-    total_price: number | null;
-    status: 'draft' | 'active' | 'completed';
-    payment_status: 'pending' | 'paid';
-    payment_method: string | null;
-    deadline: string;
-    instructions: string;
-    admin_notes: string | null;
-    client_notes: string | null;
-    is_urgent: boolean;
-    revision_count: number;
-    created_at: string;
-    updated_at: string;
-    paid_at: string | null;
-    assigned_at: string | null;
-    completed_at: string | null;
-    last_revision_at: string | null;
-    client: User;
-    admin: User | null;
+    description?: string;
+    status: 'draft' | 'active' | 'completed' | 'pending' | 'pending_payment' | 'writer_pending' | 'in_progress' | 'review' | 'cancelled';
+    payment_status?: string;
+    assignment_type?: string;
+    service_type?: string;
+    academic_level?: string;
+    subject?: string;
+    language?: string;
+    pages?: number;
+    words?: number;
+    size_unit?: string;
+    line_spacing?: string;
+    citation_style?: string;
+    source_count?: string;
+    price_per_page?: number;
+    total_price?: number;
+    is_urgent?: boolean;
+    deadline?: string;
+    instructions?: string;
+    client_notes?: string;
+    created_at?: string;
+    updated_at?: string;
+    client?: User;
+    files?: any[];
+    messages?: any[];
+    can_be_edited?: boolean;
+    is_overdue?: boolean;
+    needs_attention?: boolean;
 }
 
 export interface Message {

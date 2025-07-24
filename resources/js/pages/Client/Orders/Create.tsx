@@ -524,7 +524,7 @@ export default function Create({ auth }: { auth: Auth }) {
 
     // Fetch draft on mount
     useEffect(() => {
-        axios.get('/api/client/orders/draft').then((res) => {
+        axios.get('/client/orders/draft').then((res) => {
             if (res.data.draft) {
                 setData({
                     ...res.data.draft,
@@ -540,7 +540,10 @@ export default function Create({ auth }: { auth: Auth }) {
         });
     }, []);
 
+    // Only auto-save draft if at least one required field is filled
     useEffect(() => {
+        const hasRequired = data.assignment_type || data.service_type || data.academic_level || data.language || data.pages > 0;
+        if (!hasRequired) return;
         const saveDraft = async () => {
             if (draftId) {
                 const res = await axios.patch(`/client/orders/${draftId}/draft`, data);
@@ -1110,7 +1113,7 @@ export default function Create({ auth }: { auth: Auth }) {
                                 )}
                             </div>
                         </div>
-                        <div className="flex justify-center">
+                        <div className="flex flex-col justify-center gap-4 sm:flex-row">
                             <button
                                 className="rounded-lg bg-gradient-to-r from-blue-600 to-indigo-700 px-8 py-4 text-lg font-bold text-white shadow-lg transition-all hover:from-blue-500 hover:to-indigo-600"
                                 onClick={async () => {
@@ -1119,7 +1122,22 @@ export default function Create({ auth }: { auth: Auth }) {
                                     window.location.href = '/dashboard';
                                 }}
                             >
-                                Pay & Submit Order
+                                Proceed to Payment
+                            </button>
+                            <button
+                                className="rounded-lg border border-gray-300 bg-white px-8 py-4 text-lg font-bold text-gray-700 shadow-lg transition-all hover:bg-gray-50"
+                                onClick={async () => {
+                                    // Save as pending_payment and redirect to dashboard
+                                    if (draftId) {
+                                        await axios.post(`/client/orders/${draftId}/pay-later`);
+                                    } else {
+                                        const draftRes = await axios.post('/client/orders/draft', data);
+                                        await axios.post(`/client/orders/${draftRes.data.draft.id}/pay-later`);
+                                    }
+                                    window.location.href = '/dashboard';
+                                }}
+                            >
+                                Pay Later (Save as Pending Payment)
                             </button>
                         </div>
                     </div>

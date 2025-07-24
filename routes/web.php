@@ -140,7 +140,13 @@ Route::middleware(['auth', 'verified'])->get('/dashboard', function () {
     if ($user->isAdmin()) {
         return Redirect::route('admin.dashboard');
     } elseif ($user->isClient()) {
-        return Redirect::route('client.dashboard');
+        // Updated to use the new dashboard orders route
+        return Redirect::route('client.dashboard.orders');
     }
     abort(403);
 })->name('dashboard');
+
+// Dashboard Orders List (with tab param)
+Route::middleware(['auth', 'verified', 'role:U'])->get('/dashboard/orders', [\App\Http\Controllers\Client\DashboardController::class, 'ordersList'])->name('dashboard.orders');
+// Single Order Info Page
+Route::middleware(['auth', 'verified', 'role:U'])->get('/dashboard/order/{order}/info', [\App\Http\Controllers\Client\DashboardController::class, 'orderInfo'])->name('dashboard.order.info');
